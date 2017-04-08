@@ -30,6 +30,9 @@
     <ClInclude Include="d3dscene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cavestory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CsHook.c">

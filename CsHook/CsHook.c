@@ -3,9 +3,11 @@
 
 #include "stdafx.h"
 #include "d3dscene.h"
+#include "cavestory.h"
 
 #define EXTERN_DLL_EXPORT __declspec(dllexport)
 
+// use this to trick the game into thinking version.dll is actually doing its job
 char fakeVersionData[] = { 
 	0x9C, 0x02, 0x34, 0x00, 0x00, 0x00, 0x56, 0x00, 0x53, 0x00, 0x5F, 0x00, 0x56, 0x00, 0x45, 0x00, 0x52, 0x00, 0x53, 0x00, 0x49, 0x00, 0x4F, 0x00, 0x4E, 0x00, 0x5F, 0x00, 0x49, 0x00, 0x4E, 0x00,
 	0x46, 0x00, 0x4F, 0x00, 0x00, 0x00, 0x00, 0x00, 0xBD, 0x04, 0xEF, 0xFE, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x06, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x06, 0x00, 0x00, 0x00,
@@ -30,6 +32,42 @@ char fakeVersionData[] = {
 	0x72, 0x00, 0x61, 0x00, 0x6E, 0x00, 0x73, 0x00, 0x6C, 0x00, 0x61, 0x00, 0x74, 0x00, 0x69, 0x00, 0x6F, 0x00, 0x6E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11, 0x04, 0xB0, 0x04,
 };
 
+// 0x4A6220 start of NPC data
+CS_ENTITY* npcTable = (CS_ENTITY*)0x4A6220;
+// 0x498548 NPC function pointer table
+void(**npcFuncTable)(CS_ENTITY*) = (VOID(**)(CS_ENTITY*))0x498548;
+
+int(*randInt)(int, int) = (int(*)(int, int))0x40F350;
+
+
+void hijack_d3d() {
+	// destroy existing dd7 configuration
+	// dunno if this is actually necessary might want to keep it? ueh
+	//0x421570 - destroy bitmap objects
+	//0x40B6C0(x) - destroy directdraw surfaces(?)
+	//0049E458 AppWinHandle
+	HWND appWinHandle = *(HWND*)0x49E458;
+	((VOID(*)(VOID))0x421570)();
+	((VOID(*)(HWND))0x40B6C0)(appWinHandle);
+
+	initD3D(appWinHandle);
+	render_frame();
+	cleanD3D();
+	while (1) {
+		Sleep(1);
+	}
+}
+
+
+void hijack_npcwiggle(CS_ENTITY* This) {
+	for (int i = 0; i < 0x200; i++) {
+		CS_ENTITY* npc = &npcTable[i];
+		if (npc->inUse) {
+			npc->xPos += randInt(-1, 1) * 0x200;
+		}
+	}
+}
+
 
 EXTERN_DLL_EXPORT BOOL GetFileVersionInfoA(
 	_In_       LPCTSTR lptstrFilename,
@@ -40,6 +78,7 @@ EXTERN_DLL_EXPORT BOOL GetFileVersionInfoA(
 	return 1;
 }
 
+
 EXTERN_DLL_EXPORT BOOL GetFileVersionInfoW(
 	_In_       LPCWSTR lptstrFilename,
 	_Reserved_ DWORD   dwHandle,
@@ -49,36 +88,25 @@ EXTERN_DLL_EXPORT BOOL GetFileVersionInfoW(
 	return 1;
 }
 
+
 EXTERN_DLL_EXPORT DWORD GetFileVersionInfoSizeA(
 	_In_      LPCSTR lptstrFilename,
 	_Out_opt_ LPDWORD lpdwHandle) {
 
 	/*
-		this is where we'll do the shenanigans
-	*/
-
-	// destroy existing dd7 configuration
-	// dunno if this is actually necessary might want to keep it? ueh
-	//0x421570 - destroy bitmap objects
-	//0x40B6C0(x) - destroy directdraw surfaces(?)
-	//0049E458 AppWinHandle
-	HWND appWinHandle = *(HWND*)0x49E458;
-	((VOID(*)(VOID))0x421570)();
-	((VOID(*)(HWND))0x40B6C0)(appWinHandle);
-	initD3D(appWinHandle);
-	render_frame();
-	cleanD3D();
-	while (1) {
-		Sleep(1);
-	}
-
+	 *	this is where we'll do the shenanigans
+	 */
+	npcFuncTable[37] = &hijack_npcwiggle;
 	return 0x53C;
+}	
 
-}	__declspec(dllexport) DWORD WINAPI  GetFileVersionInfoSizeW(
+
+__declspec(dllexport) DWORD WINAPI  GetFileVersionInfoSizeW(
 	_In_      LPCWSTR lptstrFilename,
 	_Out_opt_ LPDWORD lpdwHandle) {
 	return 0x53C;
 }
+
 
 EXTERN_DLL_EXPORT BOOL WINAPI  VerQueryValueA(
 	_In_  LPCVOID pBlock,
@@ -91,6 +119,7 @@ EXTERN_DLL_EXPORT BOOL WINAPI  VerQueryValueA(
 
 	return 1;
 }
+
 
 EXTERN_DLL_EXPORT BOOL WINAPI  VerQueryValueW(
 	_In_  LPCVOID pBlock,

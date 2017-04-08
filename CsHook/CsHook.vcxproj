@@ -87,6 +87,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cavestory.h" />
     <ClInclude Include="CsHook.h" />
     <ClInclude Include="d3dscene.h" />
     <ClInclude Include="stdafx.h" />
