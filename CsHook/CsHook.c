@@ -33,11 +33,15 @@ char fakeVersionData[] = {
 };
 
 // 0x4A6220 start of NPC data
-CS_ENTITY* npcTable = (CS_ENTITY*)0x4A6220;
+CS_ENTITY* CS_npcTable = (CS_ENTITY*)0x4A6220;
 // 0x498548 NPC function pointer table
-void(**npcFuncTable)(CS_ENTITY*) = (VOID(**)(CS_ENTITY*))0x498548;
+void(**CS_npcFuncTable)(CS_ENTITY*) = (VOID(**)(CS_ENTITY*))0x498548;
 
-int(*randInt)(int, int) = (int(*)(int, int))0x40F350;
+int(*CS_randInt)(int, int) = (int(*)(int, int))0x40F350;
+
+BOOL(*CS_peek_message)() = (BOOL(*)())0x40B340;
+
+LONG CS_wndProc = 0x412CA0;
 
 
 void hijack_d3d() {
@@ -47,23 +51,23 @@ void hijack_d3d() {
 	//0x40B6C0(x) - destroy directdraw surfaces(?)
 	//0049E458 AppWinHandle
 	HWND appWinHandle = *(HWND*)0x49E458;
-	((VOID(*)(VOID))0x421570)();
-	((VOID(*)(HWND))0x40B6C0)(appWinHandle);
+	//((VOID(*)(VOID))0x421570)();
+	//((VOID(*)(HWND))0x40B6C0)(appWinHandle);
 
 	initD3D(appWinHandle);
-	render_frame();
-	cleanD3D();
-	while (1) {
-		Sleep(1);
+	while (CS_peek_message()) {		
+		render_frame();
+		Sleep(10);
 	}
+	cleanD3D();
 }
 
 
 void hijack_npcwiggle(CS_ENTITY* This) {
 	for (int i = 0; i < 0x200; i++) {
-		CS_ENTITY* npc = &npcTable[i];
+		CS_ENTITY* npc = &CS_npcTable[i];
 		if (npc->inUse) {
-			npc->xPos += randInt(-1, 1) * 0x200;
+			npc->xPos += CS_randInt(-1, 1) * 0x200;
 		}
 	}
 }
@@ -96,7 +100,8 @@ EXTERN_DLL_EXPORT DWORD GetFileVersionInfoSizeA(
 	/*
 	 *	this is where we'll do the shenanigans
 	 */
-	npcFuncTable[37] = &hijack_npcwiggle;
+	//npcFuncTable[37] = &hijack_npcwiggle;
+	hijack_d3d();
 	return 0x53C;
 }	
 

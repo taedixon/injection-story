@@ -9,9 +9,9 @@ LPDIRECT3DVERTEXBUFFER9 v_buffer; // vertex buffer
 
 CUSTOMVERTEX tri[] =
 {
-	{ 320.0f, 50.0f, 1.0f, 1.0f, D3DCOLOR_XRGB(0, 0, 255), },
-	{ 520.0f, 400.0f, 1.0f, 1.0f, D3DCOLOR_XRGB(0, 255, 0), },
-	{ 120.0f, 400.0f, 1.0f, 1.0f, D3DCOLOR_XRGB(255, 0, 0), },
+	{ 2.5f, -3.0f, 0.0f, D3DCOLOR_XRGB(0, 0, 255), },
+	{ 0.0f, 3.0f, 0.0f, D3DCOLOR_XRGB(0, 255, 0), },
+	{ -2.5f, -3.0f, 0.0f, D3DCOLOR_XRGB(255, 0, 0), },
 };
 
 void initD3D(HWND hWnd)
@@ -41,6 +41,9 @@ void initD3D(HWND hWnd)
 		&v_buffer,
 		NULL);
 
+	d3ddev->lpVtbl->SetRenderState(d3ddev, D3DRS_LIGHTING, FALSE);    // turn off the 3D lighting
+	d3ddev->lpVtbl->SetRenderState(d3ddev, D3DRS_CULLMODE, D3DCULL_NONE);
+	
 	VOID* pVoid;    // the void pointer
 
 	v_buffer->lpVtbl->Lock(v_buffer, 0, 0, (void**)&pVoid, 0);    // lock the vertex buffer
@@ -58,6 +61,41 @@ void render_frame(void)
 
 	// do 3D rendering on the back buffer here
 	d3ddev->lpVtbl->SetFVF(d3ddev, CUSTOMFVF);
+
+	// SET UP THE PIPELINE
+
+	D3DMATRIX matRotateY;    // a matrix to store the rotation information
+
+	static float index = 0.0f; index += 0.05f;    // an ever-increasing float value
+
+	// build a matrix to rotate the model based on the increasing float value
+	D3DXMatrixRotationY(&matRotateY, index);
+
+	// tell Direct3D about our matrix
+	d3ddev->lpVtbl->SetTransform(d3ddev, D3DTS_WORLD, &matRotateY);
+
+	D3DMATRIX matView;    // the view transform matrix
+	D3DXVECTOR3 v1 = { 0.0f, 0.0f, 10.0f };
+	D3DXVECTOR3 v2 = { 0.0f, 0.0f, 0.0f };
+	D3DXVECTOR3 v3 = { 0.0f, 1.0f, 0.0f };
+	D3DXMatrixLookAtLH(&matView,
+		&v1,    // the camera position
+		&v2,    // the look-at position
+		&v3);    // the up direction
+
+	d3ddev->lpVtbl->SetTransform(d3ddev, D3DTS_VIEW, &matView);    // set the view transform to matView
+
+	D3DMATRIX matProjection;     // the projection transform matrix
+
+	D3DXMatrixPerspectiveFovLH(&matProjection,
+		D3DXToRadian(45),    // the horizontal field of view
+		(FLOAT)640 / (FLOAT)480, // aspect ratio
+		1.0f,    // the near view-plane
+		100.0f);    // the far view-plane
+
+	d3ddev->lpVtbl->SetTransform(d3ddev, D3DTS_PROJECTION, &matProjection);    // set the projection
+
+
 	d3ddev->lpVtbl->SetStreamSource(d3ddev, 0, v_buffer, 0, sizeof(CUSTOMVERTEX));
 	d3ddev->lpVtbl->DrawPrimitive(d3ddev, D3DPT_TRIANGLELIST, 0, 1);
 
