@@ -33,6 +33,9 @@
     <ClInclude Include="cavestory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="npcs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CsHook.c">
@@ -45,6 +48,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="npcs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cavestory.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

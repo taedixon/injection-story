@@ -55,7 +55,7 @@ void initD3D(HWND hWnd)
 void render_frame(void)
 {
 	// clear the window to a deep blue
-	d3ddev->lpVtbl->Clear(d3ddev, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 40, 100), 1.0f, 0);
+	d3ddev->lpVtbl->Clear(d3ddev, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0x20), 1.0f, 0);
 
 	d3ddev->lpVtbl->BeginScene(d3ddev);    // begins the 3D scene
 

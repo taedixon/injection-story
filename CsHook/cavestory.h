@@ -36,3 +36,49 @@ typedef struct Entity {
 	int damage;
 	struct Entity* parent;
 } CS_ENTITY;
+
+//size: 0x10
+typedef struct NoteInfo {
+	struct NoteInfo* previousNote;
+	struct NoteInfo* nextNote;
+	int beatNum;
+	unsigned char len; //+C
+	unsigned char pitch; //+D
+	unsigned char vol; //+E
+	unsigned char pan; //+F
+} CS_NOTEINFO;
+
+typedef struct {
+	char tileset[32];
+	char filename[32];
+	int scrollType;
+	char bgName[32];
+	char npc1[32];
+	char npc2[32];
+	char bossNum;
+	char mapName[35];
+} CS_MAPDATA;
+
+//VARs
+extern HWND* CS_appWinHandle;
+extern CS_ENTITY* CS_npcTable;
+extern CS_MAPDATA* CS_mapdata;
+extern unsigned short* CS_orgTempo;
+extern int* CS_bgMode;
+extern short* CS_mapWidth;
+extern short* CS_mapHeight;
+extern unsigned char** CS_mapTiles;
+extern unsigned char* CS_pxaData;
+extern int* CS_playerX;
+extern int* CS_playerY;
+extern int* CS_playerXvel;
+extern int* CS_playerYvel;
+extern int* CS_soundPointers;
+
+//FUNCs
+extern void(**CS_npcFuncTable)(CS_ENTITY*);
+extern int(*CS_randInt)(int, int);
+extern BOOL(*CS_peek_message)();
+extern void(*CS_QuitMMTimer)();
+extern void(*CS_PlayOrganyaMusic)();
+extern unsigned char(*CS_GetTileType)(int, int);
