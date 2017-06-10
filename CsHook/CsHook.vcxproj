@@ -41,11 +41,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>./basegame;D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;.;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;$(IncludePath)</IncludePath>
+    <IncludePath>./basegame;D:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;.;$(IncludePath)</IncludePath>
     <TargetName>version</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -90,15 +91,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cavestory.h" />
+    <ClInclude Include="basegame\cavestory.h" />
     <ClInclude Include="CsHook.h" />
-    <ClInclude Include="d3dscene.h" />
-    <ClInclude Include="npcs.h" />
+    <ClInclude Include="mods\treasureisland\hooks.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="cavestory.c" />
+    <ClCompile Include="basegame\cavestory.c" />
     <ClCompile Include="CsHook.c" />
     <ClCompile Include="d3dscene.c" />
     <ClCompile Include="dllmain.c">
@@ -109,7 +109,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="npcs.c" />
     <ClCompile Include="stdafx.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

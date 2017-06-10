@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\mods">
+      <UniqueIdentifier>{7cff28c0-d66e-4ac7-86af-7e82ffd6db28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mods\yougotmail">
+      <UniqueIdentifier>{62da989a-dcf0-4b41-b21a-cc4058523ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mods\treasureislands">
+      <UniqueIdentifier>{7dec67d3-01d7-49ad-b490-d75c6b2bfc54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -27,21 +36,15 @@
     <ClInclude Include="CsHook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="d3dscene.h">
+    <ClInclude Include="mods\treasureisland\hooks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cavestory.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="npcs.h">
+    <ClInclude Include="basegame\cavestory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CsHook.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="d3dscene.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dllmain.c">
@@ -50,10 +53,10 @@
     <ClCompile Include="stdafx.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="npcs.c">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="d3dscene.c">
+      <Filter>Source Files\mods\yougotmail</Filter>
     </ClCompile>
-    <ClCompile Include="cavestory.c">
+    <ClCompile Include="basegame\cavestory.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -11,9 +11,7 @@
 #define VER_H
 // Windows Header Files:
 #include <windows.h>
-#include <d3d9.h>
-#include <d3dx9.h>
-
+#include <stdlib.h>
 
 
 // TODO: reference additional headers your program requires here

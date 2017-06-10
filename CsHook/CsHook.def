@@ -1,4 +1,4 @@
-LIBRARY CsHook
+LIBRARY version
 EXPORTS
 	GetFileVersionInfoA
 	GetFileVersionInfoW
