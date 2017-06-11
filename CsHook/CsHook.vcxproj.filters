@@ -42,6 +42,9 @@
     <ClInclude Include="basegame\cavestory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mods\treasureisland\map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CsHook.c">
@@ -53,10 +56,13 @@
     <ClCompile Include="stdafx.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="d3dscene.c">
-      <Filter>Source Files\mods\yougotmail</Filter>
-    </ClCompile>
     <ClCompile Include="basegame\cavestory.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mods\treasureisland\hooks.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mods\treasureisland\map.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

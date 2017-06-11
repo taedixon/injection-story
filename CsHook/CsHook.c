@@ -3,7 +3,7 @@
 
 #include "stdafx.h"
 #include "cavestory.h"
-
+#include "mods/treasureisland/hooks.h"
 
 #define EXTERN_DLL_EXPORT __declspec(dllexport)
 
@@ -61,6 +61,7 @@ EXTERN_DLL_EXPORT DWORD GetFileVersionInfoSizeA(
 	 *	this is where we'll do the shenanigans
 	 */
 	// hook_*();
+	hook_treasureisland();
 	return 0x53C;
 }	
 

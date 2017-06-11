@@ -1,4 +1,8 @@
 #include "stdafx.h"
+#pragma once
+
+#ifndef CAVESTORY_H
+#define CAVESTORY_H
 
 typedef struct Entity {
 	int inUse;		//+0x00
@@ -63,10 +67,11 @@ typedef struct {
 extern HWND* CS_appWinHandle;
 extern CS_ENTITY* CS_npcTable;
 extern CS_MAPDATA* CS_mapdata;
+extern int* CS_oldmapdata;
 extern unsigned short* CS_orgTempo;
 extern int* CS_bgMode;
-extern short* CS_mapWidth;
-extern short* CS_mapHeight;
+extern unsigned short* CS_mapWidth;
+extern unsigned short* CS_mapHeight;
 extern unsigned char** CS_mapTiles;
 extern unsigned char* CS_pxaData;
 extern int* CS_playerX;
@@ -74,6 +79,8 @@ extern int* CS_playerY;
 extern int* CS_playerXvel;
 extern int* CS_playerYvel;
 extern int* CS_soundPointers;
+extern char* CS_dataDirPath;
+extern RECT* CS_fullScreenRect;
 
 //FUNCs
 extern void(**CS_npcFuncTable)(CS_ENTITY*);
@@ -82,3 +89,9 @@ extern BOOL(*CS_peek_message)();
 extern void(*CS_QuitMMTimer)();
 extern void(*CS_PlayOrganyaMusic)();
 extern unsigned char(*CS_GetTileType)(int, int);
+extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
+
+//constants
+#define CS_BM_TILESET 2
+
+#endif
