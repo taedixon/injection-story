@@ -1,5 +1,6 @@
-#include "stdafx.h"
+
 #pragma once
+#include "stdafx.h"
 
 #ifndef CAVESTORY_H
 #define CAVESTORY_H
@@ -63,24 +64,69 @@ typedef struct {
 	char mapName[35];
 } CS_MAPDATA;
 
+//size: 0x14
+typedef struct {
+	int id;
+	int level;
+	int energy;
+	int maxAmmo;
+	int curAmmo;
+} CS_WEAPON;
+
 //VARs
-extern HWND* CS_appWinHandle;
+//npc
 extern CS_ENTITY* CS_npcTable;
+//map
 extern CS_MAPDATA* CS_mapdata;
 extern int* CS_oldmapdata;
-extern unsigned short* CS_orgTempo;
 extern int* CS_bgMode;
 extern unsigned short* CS_mapWidth;
 extern unsigned short* CS_mapHeight;
 extern unsigned char** CS_mapTiles;
 extern unsigned char* CS_pxaData;
+//player
+extern int* CS_playerDirection;
+extern int* CS_playerFacingUp;
+extern int* CS_playerFacingDown;
+extern int* CS_playerFrameNum;
+extern int* CS_playerEquipFlags;
 extern int* CS_playerX;
 extern int* CS_playerY;
 extern int* CS_playerXvel;
 extern int* CS_playerYvel;
+extern int* CS_playerCamX;
+extern int* CS_playerCamY;
+extern int* CS_playerCamFocusX;
+extern int* CS_playerCamFocusY;
+extern RECT* CS_playerFrameRect;
+extern RECT* CS_playerHitRect;
+extern RECT* CS_playerSizeRect;
+extern RECT* CS_playerWepRect;
+extern CS_WEAPON* CS_playerWeapons;
+extern int* CS_playerSelWeapon;
+//sound
 extern int* CS_soundPointers;
+extern unsigned short* CS_orgTempo;
+//system
+extern HWND* CS_appWinHandle;
 extern char* CS_dataDirPath;
 extern RECT* CS_fullScreenRect;
+extern int* CS_lastKeyHeld;
+extern int* CS_keyHeld;
+extern int* CS_keyPressed;
+extern int* CS_controlMode;
+//keys
+extern int* CS_keyJump;
+extern int* CS_keyShoot;
+extern int* CS_keyNextWep;
+extern int* CS_keyPrevWep;
+extern int* CS_keyMenu;
+extern int* CS_keyJump;
+extern int* CS_keyLeft;
+extern int* CS_keyUp;
+extern int* CS_keyRight;
+extern int* CS_keyDown;
+
 
 //FUNCs
 extern void(**CS_npcFuncTable)(CS_ENTITY*);
@@ -93,5 +139,8 @@ extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
 
 //constants
 #define CS_BM_TILESET 2
+#define CS_BM_ARMS 11
+#define CS_BM_PLAYER 16
+
 
 #endif

@@ -45,6 +45,12 @@
     <ClInclude Include="mods\treasureisland\map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mods\treasureisland\player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mods\treasureisland\util.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CsHook.c">
@@ -63,6 +69,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mods\treasureisland\map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mods\treasureisland\player.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mods\treasureisland\util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

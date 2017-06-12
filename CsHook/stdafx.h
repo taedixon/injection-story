@@ -12,6 +12,7 @@
 // Windows Header Files:
 #include <windows.h>
 #include <stdlib.h>
-
+#include <math.h>
+#define _CRT_SECURE_NO_WARNINGS
 
 // TODO: reference additional headers your program requires here
