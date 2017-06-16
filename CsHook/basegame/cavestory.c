@@ -14,6 +14,7 @@ unsigned short* CS_mapWidth = (short*)0x49E586;
 unsigned short* CS_mapHeight = (short*)0x49E588;
 unsigned char** CS_mapTiles = (unsigned char**)0x49E480;
 unsigned char* CS_pxaData = (unsigned char*)0x49E484;
+int* CS_globalWaterDepth = (int*)0x499C90;
 
 //player
 int* CS_playerDirection = (int*)0x49E640;
@@ -21,6 +22,7 @@ int* CS_playerFacingUp = (int*)0x49E644;
 int* CS_playerFacingDown = (int*)0x49E648;
 int* CS_playerFrameNum = (int*)0x49E678;
 int* CS_playerEquipFlags = (int*)0x49E650;
+int* CS_playerTileFlags = (int*)0x49E63C;
 int* CS_playerX = (int*)0x49E654;
 int* CS_playerY = (int*)0x49E658;
 int* CS_playerXvel = (int*)0x49E66C;
@@ -35,6 +37,7 @@ RECT* CS_playerSizeRect = (RECT*)0x49E68C;
 RECT* CS_playerWepRect = (RECT*)0x49E6AC;
 CS_WEAPON* CS_playerWeapons = (CS_WEAPON*)0x499BC8;
 int* CS_playerSelWeapon = (int*)0x499C68;
+int* CS_playerCurrentHealth = (int*)0x49E6CC;
 
 //sound
 int* CS_soundPointers = (int*)0x4A5568;
@@ -75,6 +78,25 @@ void(*CS_PlayOrganyaMusic)() = (void(*)())0x41C790;
 unsigned char(*CS_GetTileType)(int, int) = (unsigned char(*)(int, int))0x4139A0;
 void(*CS_putBitmap3)(RECT*, int, int, RECT*, int) 
 					= (void(*)(RECT*, int, int, RECT*, int)) 0x40C3C0;
+void(*CS_fillRect)(RECT*, int) = (void(*)(RECT*, int)) 0x40C9E0;
+
+
+int(*CS_playerHitSquareBlock)(int, int) = (int(*)(int, int))0x416E30;
+int(*CS_playerHitSlopeFloorA)(int, int) = (int(*)(int, int))0x4171D0;
+int(*CS_playerHitSlopeFloorB)(int, int) = (int(*)(int, int))0x4172E0;
+int(*CS_playerHitSlopeFloorC)(int, int) = (int(*)(int, int))0x4173F0;
+int(*CS_playerHitSlopeFloorD)(int, int) = (int(*)(int, int))0x417500; 
+int(*CS_playerHitSlopeRoofA)(int, int) = (int(*)(int, int))0x417610;
+int(*CS_playerHitSlopeRoofB)(int, int) = (int(*)(int, int))0x417720;
+int(*CS_playerHitSlopeRoofC)(int, int) = (int(*)(int, int))0x417830;
+int(*CS_playerHitSlopeRoofD)(int, int) = (int(*)(int, int))0x417940;
+int(*CS_playerHitWater)(int, int) = (int(*)(int, int))0x417A50;
+int(*CS_playerHitSpike)(int, int) = (int(*)(int, int))0x417AE0;
+int(*CS_playerHitSpikeWater)(int, int) = (int(*)(int, int))0x417B70;
+int(*CS_playerHitWindLeft)(int, int) = (int(*)(int, int))0x417C00;
+int(*CS_playerHitWindUp)(int, int) = (int(*)(int, int))0x417C90;
+int(*CS_playerHitWindRight)(int, int) = (int(*)(int, int))0x417D20;
+int(*CS_playerHitWindDown)(int, int) = (int(*)(int, int))0x41DB0;
 
 
 //0x421570 - destroy bitmap objects

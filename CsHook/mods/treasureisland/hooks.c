@@ -12,4 +12,6 @@ void hook_treasureisland() {
 	CS_oldmapdata[3] = (int)&drawStageFront;
 	CS_oldmapdata[4] = (int)&control_topdown;
 	CS_oldmapdata[5] = (int)&playerCalcFrame;
+	CS_oldmapdata[6] = (int)&drawPlayer;
+	CS_oldmapdata[7] = (int)&playerCheckTiles;
 }

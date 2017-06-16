@@ -14,6 +14,7 @@
 unsigned short* mapLayers[NUM_LAYER];
 
 int currentMapType = 0;
+int tileAnimTimer = 0;
 
 // return 1 for success, 0 for failure
 int loadMap(char* mapName) {
@@ -108,6 +109,7 @@ void _drawStage_legacy(int camX, int camY, BOOLEAN front) {
 }
 
 void _drawStage(int camX, int camY, unsigned int layer) {
+	int tframe = 0;
 	if (layer >= NUM_LAYER)
 		return;
 	unsigned short* tileLayer = mapLayers[layer];
@@ -118,13 +120,25 @@ void _drawStage(int camX, int camY, unsigned int layer) {
 	RECT tileRect;
 	for (int y = startY; y < startY + VIEW_TILE_H; y++) {
 		for (int x = startX; x < startX + VIEW_TILE_W; x++) {
+			tframe = 0;
 			int offset = x + *CS_mapWidth * y;
 			unsigned int tileNum = tileLayer[offset];
+			int type = CS_pxaData[tileNum];
 
 			tileRect.left = TILE_SIZE * (tileNum % TILESET_W);
 			tileRect.top = TILE_SIZE * (tileNum / TILESET_W);
 			tileRect.right = tileRect.left + TILE_SIZE;
 			tileRect.bottom = tileRect.top + TILE_SIZE;
+
+			//calc tile animation
+			if (type > 0x20 && type <= 0x40) {
+				tframe = (tileAnimTimer / (type-0x20)) % 4;
+			} else if ((type % 0x10) >= 8) {
+				tframe = (tileAnimTimer / 16) % 4;
+			}
+			tileRect.top += tframe * TILE_SIZE;
+			tileRect.bottom += tframe * TILE_SIZE;
+
 			int screenX = TILE_SIZE * x - 8 - (camX / 512);
 			int screenY = TILE_SIZE * y - 8 - (camY / 512);
 			CS_putBitmap3(CS_fullScreenRect, screenX, screenY, &tileRect, CS_BM_TILESET);
@@ -134,6 +148,9 @@ void _drawStage(int camX, int camY, unsigned int layer) {
 }
 
 void drawStageBack(int cameraX, int cameraY) {
+	if (++tileAnimTimer >= 40320) {
+		tileAnimTimer = 0;
+	}
 	switch (currentMapType) {
 	case 0x10:
 		_drawStage_legacy(cameraX, cameraY, FALSE);

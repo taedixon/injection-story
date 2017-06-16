@@ -84,12 +84,14 @@ extern unsigned short* CS_mapWidth;
 extern unsigned short* CS_mapHeight;
 extern unsigned char** CS_mapTiles;
 extern unsigned char* CS_pxaData;
+extern int* CS_globalWaterDepth;
 //player
 extern int* CS_playerDirection;
 extern int* CS_playerFacingUp;
 extern int* CS_playerFacingDown;
 extern int* CS_playerFrameNum;
 extern int* CS_playerEquipFlags;
+extern int* CS_playerTileFlags;
 extern int* CS_playerX;
 extern int* CS_playerY;
 extern int* CS_playerXvel;
@@ -104,6 +106,7 @@ extern RECT* CS_playerSizeRect;
 extern RECT* CS_playerWepRect;
 extern CS_WEAPON* CS_playerWeapons;
 extern int* CS_playerSelWeapon;
+extern int* CS_playerCurrentHealth;
 //sound
 extern int* CS_soundPointers;
 extern unsigned short* CS_orgTempo;
@@ -136,11 +139,30 @@ extern void(*CS_QuitMMTimer)();
 extern void(*CS_PlayOrganyaMusic)();
 extern unsigned char(*CS_GetTileType)(int, int);
 extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
+extern void(*CS_fillRect)(RECT*, int);
+
+extern int(*CS_playerHitSquareBlock)();
+extern int(*CS_playerHitSlopeFloorA)();
+extern int(*CS_playerHitSlopeFloorB)();
+extern int(*CS_playerHitSlopeFloorC)();
+extern int(*CS_playerHitSlopeFloorD)();
+extern int(*CS_playerHitSlopeRoofA)();
+extern int(*CS_playerHitSlopeRoofB)();
+extern int(*CS_playerHitSlopeRoofC)();
+extern int(*CS_playerHitSlopeRoofD)();
+extern int(*CS_playerHitSpike)();
+extern int(*CS_playerHitSpikeWater)();
+extern int(*CS_playerHitWater)();
+extern int(*CS_playerHitWindLeft)();
+extern int(*CS_playerHitWindUp)();
+extern int(*CS_playerHitWindRight)();
+extern int(*CS_playerHitWindDown)();
 
 //constants
 #define CS_BM_TILESET 2
 #define CS_BM_ARMS 11
 #define CS_BM_PLAYER 16
 
+#define CS_SUBPX 0x200
 
 #endif

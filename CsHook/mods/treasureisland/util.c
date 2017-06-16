@@ -1,5 +1,5 @@
 #include "stdafx.h"
-
+#include "cavestory.h"
 #include "util.h"
 
 
@@ -19,4 +19,38 @@ void capMagnitude(int* x, int* y, int magnitude) {
 void vecFromAngle(int* x, int* y, int magnitude, double angle) {
 	*x = (int)(cos(angle) * magnitude);
 	*y = (int)(sin(angle) * magnitude);
+}
+
+enum DIRECTION getDirection(int x, int y) {
+	char xMag = abs(x) > abs(y);
+	if (x < -50 && xMag) {
+		return WEST;
+	}
+	if (x > 50 && xMag) {
+		return EAST;
+	}
+	if (y < 0) {
+		return NORTH;
+	}
+	return SOUTH;
+}
+
+void drawRect(RECT* fr, int col) {
+	RECT fr2;
+	//use this to draw a hollow box (bad yeah)
+	fr2 = *fr;
+	fr2.right = fr2.left + 1;
+	CS_fillRect(&fr2, col);
+
+	fr2 = *fr;
+	fr2.bottom = fr2.top + 1;
+	CS_fillRect(&fr2, col);
+
+	fr2 = *fr;
+	fr2.left = fr2.right - 1;
+	CS_fillRect(&fr2, col);
+
+	fr2 = *fr;
+	fr2.top = fr2.bottom - 1;
+	CS_fillRect(&fr2, col);
 }
