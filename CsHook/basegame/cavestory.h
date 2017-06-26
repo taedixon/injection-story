@@ -118,6 +118,7 @@ extern int* CS_lastKeyHeld;
 extern int* CS_keyHeld;
 extern int* CS_keyPressed;
 extern int* CS_controlMode;
+extern int* CS_gameState;
 //keys
 extern int* CS_keyJump;
 extern int* CS_keyShoot;
@@ -134,12 +135,16 @@ extern int* CS_keyDown;
 //FUNCs
 extern void(**CS_npcFuncTable)(CS_ENTITY*);
 extern int(*CS_randInt)(int, int);
-extern BOOL(*CS_peek_message)();
+extern BOOL(*CS_flipScreen)(HWND);
 extern void(*CS_QuitMMTimer)();
 extern void(*CS_PlayOrganyaMusic)();
+extern void(*CS_playSong)(int);
+extern void(*CS_playSound)(int sfxid, int channel);
 extern unsigned char(*CS_GetTileType)(int, int);
 extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
 extern void(*CS_fillRect)(RECT*, int);
+extern void(*CS_updateKeys)();
+extern int(*CS_escMenuLoop)(HWND window);
 
 extern int(*CS_playerHitSquareBlock)();
 extern int(*CS_playerHitSlopeFloorA)();
@@ -159,6 +164,7 @@ extern int(*CS_playerHitWindRight)();
 extern int(*CS_playerHitWindDown)();
 
 //constants
+#define CS_BM_TITLE 0
 #define CS_BM_TILESET 2
 #define CS_BM_ARMS 11
 #define CS_BM_PLAYER 16

@@ -200,10 +200,17 @@ void _playerCalcFrame_boat(int canControl) {
 	const int frameW = 16;
 	const int frameH = 16;
 	enum DIRECTION dir = getDirection(*CS_playerXvel, *CS_playerYvel);
-	CS_playerFrameRect->left = dir * 0x10;
-	CS_playerFrameRect->top = 0x20;
+	CS_playerFrameRect->left = dir * 0x10 + 416;
+	CS_playerFrameRect->top = 0;
 	CS_playerFrameRect->right = CS_playerFrameRect->left + 0x10;
 	CS_playerFrameRect->bottom = CS_playerFrameRect->top + 0x10;
+	//set boat hitbox
+	CS_playerHitRect->top = frameW * CS_SUBPX / 2;
+	CS_playerHitRect->bottom = frameH * CS_SUBPX / 4;
+	CS_playerHitRect->left = 4 * CS_SUBPX;
+	CS_playerHitRect->right = 4 * CS_SUBPX;
+	CS_playerSizeRect->left = frameW * CS_SUBPX / 2;
+	CS_playerSizeRect->top = frameH * CS_SUBPX / 2;
 }
 
 void playerCalcFrame(char canControl) {

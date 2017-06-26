@@ -4,6 +4,7 @@
 #include "hooks.h"
 #include "map.h"
 #include "player.h"
+#include "title.h"
 
 void hook_treasureisland() {
 	CS_oldmapdata[0] = (int)&loadMap;
@@ -14,4 +15,5 @@ void hook_treasureisland() {
 	CS_oldmapdata[5] = (int)&playerCalcFrame;
 	CS_oldmapdata[6] = (int)&drawPlayer;
 	CS_oldmapdata[7] = (int)&playerCheckTiles;
+	CS_oldmapdata[8] = (int)&doTitle;
 }

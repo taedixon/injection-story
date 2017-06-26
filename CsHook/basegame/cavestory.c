@@ -51,6 +51,7 @@ int* CS_lastKeyHeld = (int*)0x49E218;
 int* CS_keyHeld = (int*)0x49E210;
 int* CS_keyPressed = (int*) 0x49E214;
 int* CS_controlMode = (int*)0x49E64C;
+int* CS_gameState = (int*)0x49E1E8;
 //keys
 //int* CS_keyJump = (int*)0x493610; (dup?)
 //int* CS_keyShoot = (int*)0x493614; (dup?)
@@ -72,13 +73,17 @@ unsigned short* CS_orgTempo = (unsigned short*)0x4A4E18;
 void(**CS_npcFuncTable)(CS_ENTITY*) = (VOID(**)(CS_ENTITY*))0x498548;
 
 int(*CS_randInt)(int, int) = (int(*)(int, int))0x40F350;
-BOOL(*CS_peek_message)() = (BOOL(*)())0x40B340;
+BOOL(*CS_flipScreen)(HWND) = (BOOL(*)(HWND))0x40B340;
 void(*CS_QuitMMTimer)() = (void(*)())0x41C250;
 void(*CS_PlayOrganyaMusic)() = (void(*)())0x41C790;
+void(*CS_playSong)(int) = (void(*)(int))0x420EE0;
+void(*CS_playSound)(int, int) = (void(*)(int, int))0x420640;
 unsigned char(*CS_GetTileType)(int, int) = (unsigned char(*)(int, int))0x4139A0;
 void(*CS_putBitmap3)(RECT*, int, int, RECT*, int) 
 					= (void(*)(RECT*, int, int, RECT*, int)) 0x40C3C0;
 void(*CS_fillRect)(RECT*, int) = (void(*)(RECT*, int)) 0x40C9E0;
+void(*CS_updateKeys)() = (void(*)())0x4122E0;
+int(*CS_escMenuLoop)(HWND window) = (int(*)(HWND))0x40DD70;
 
 
 int(*CS_playerHitSquareBlock)(int, int) = (int(*)(int, int))0x416E30;
