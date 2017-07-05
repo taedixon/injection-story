@@ -14,5 +14,6 @@
 #include <stdlib.h>
 #include <math.h>
 #define _CRT_SECURE_NO_WARNINGS
+#include "cavestory.h"
 
 // TODO: reference additional headers your program requires here

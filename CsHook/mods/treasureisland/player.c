@@ -51,8 +51,9 @@ void _drawPlayer_legacy(int camX, int camY) {
 	int wpnYOffset, wpnXOffset;
 	RECT playerRect = *CS_playerFrameRect;
 	RECT weaponRect;
-	int playerScreenX = (*CS_playerX - (*CS_playerSizeRect).left) / CS_SUBPX - camX / CS_SUBPX;
-	int playerScreenY = (*CS_playerY - (*CS_playerSizeRect).top) / CS_SUBPX - camY / CS_SUBPX;
+	int playerScreenX = (*CS_playerX - (*CS_playerSizeRect).left);
+	int playerScreenY = (*CS_playerY - (*CS_playerSizeRect).top);
+	toScreenSpace(&playerScreenX, &playerScreenY, camX, camY);
 
 	//calculate weapon framerects
 	weaponRect.left = 24 * (CS_playerWeapons[*CS_playerSelWeapon].id % 13);
@@ -104,20 +105,21 @@ void _drawPlayer_boat(int camX, int camY) {
 void _drawPlayer_debug(int camX, int camY) {
 	RECT fr;
 	int hitboxCol = 0xFF2222;
-	fr.left = -CS_playerHitRect->left - camX + *CS_playerX;
-	fr.top = -CS_playerHitRect->top - camY + *CS_playerY;
-	fr.right = CS_playerHitRect->right - camX + *CS_playerX;
-	fr.bottom = CS_playerHitRect->bottom - camY + *CS_playerY;
+	fr.left = -CS_playerHitRect->left + *CS_playerX;
+	fr.top = -CS_playerHitRect->top + *CS_playerY;
+	fr.right = CS_playerHitRect->right + *CS_playerX;
+	fr.bottom = CS_playerHitRect->bottom + *CS_playerY;
 
-	fr.left /= CS_SUBPX;
-	fr.top /= CS_SUBPX;
-	fr.right /= CS_SUBPX;
-	fr.bottom /= CS_SUBPX;
+	toScreenSpace(&fr.left, &fr.top, camX, camY);
+	toScreenSpace(&fr.right, &fr.bottom, camX, camY);
 
 	drawRect(&fr, hitboxCol);
 
-	fr.left = (-camX + *CS_playerX) / CS_SUBPX - 1;
-	fr.top = (-camY + *CS_playerY)  / CS_SUBPX - 1;
+	fr.left = *CS_playerX;
+	fr.top = *CS_playerY;
+	toScreenSpace(&fr.left, &fr.top, camX, camY);
+	fr.left--;
+	fr.right--;
 	fr.right = fr.left + 3;
 	fr.bottom = fr.top + 3;
 	drawRect(&fr, 0xFF00FF);

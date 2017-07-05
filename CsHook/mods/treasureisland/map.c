@@ -12,6 +12,8 @@
 #define TILESET_W 16
 
 unsigned short* mapLayers[NUM_LAYER];
+unsigned char* pxaData = NULL;
+int pxaLen;
 
 int currentMapType = 0;
 int tileAnimTimer = 0;
@@ -71,6 +73,42 @@ int loadMap(char* mapName) {
 	return result;
 }
 
+char loadPxa(char* mapName) {
+	char nameBuf[0x100];
+	FILE* fileHandle;
+
+	free(pxaData);
+	pxaData = NULL;
+
+	sprintf(nameBuf, "%s\\%s", CS_dataDirPath, mapName);
+	fileHandle = fopen(nameBuf, "rb");
+	if (fileHandle) {
+		fseek(fileHandle, 0, SEEK_END);
+		pxaLen = ftell(fileHandle);
+		fseek(fileHandle, 0, SEEK_SET);
+
+		pxaData = malloc(pxaLen);
+		fread(pxaData, 1, pxaLen, fileHandle);
+		fclose(fileHandle);
+		return 1;
+	}
+	return 0;
+}
+
+unsigned char _getPxa(unsigned int x, unsigned int y, unsigned int layer) {
+	if (pxaData && x < *CS_mapWidth && y < *CS_mapHeight) {
+		int loc = mapLayers[layer][x + *CS_mapWidth * y];
+		if (loc < pxaLen) {
+			return pxaData[loc];
+		}
+	}
+	return 0;
+}
+
+unsigned char getPxa(unsigned int x, unsigned int y) {
+	return _getPxa(x, y, PHYSICAL_LAYER);
+}
+
 void freeMap() {
 	for (int i = 0; i < NUM_LAYER; i++) {
 		free(mapLayers[i]);
@@ -110,6 +148,7 @@ void _drawStage_legacy(int camX, int camY, BOOLEAN front) {
 
 void _drawStage(int camX, int camY, unsigned int layer) {
 	int tframe = 0;
+	int type;
 	if (layer >= NUM_LAYER)
 		return;
 	unsigned short* tileLayer = mapLayers[layer];
@@ -123,7 +162,10 @@ void _drawStage(int camX, int camY, unsigned int layer) {
 			tframe = 0;
 			int offset = x + *CS_mapWidth * y;
 			unsigned int tileNum = tileLayer[offset];
-			int type = CS_pxaData[tileNum];
+			if (tileNum == 0) {
+				continue;
+			}
+			type = _getPxa(x, y, layer);
 
 			tileRect.left = TILE_SIZE * (tileNum % TILESET_W);
 			tileRect.top = TILE_SIZE * (tileNum / TILESET_W);

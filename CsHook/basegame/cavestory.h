@@ -73,6 +73,33 @@ typedef struct {
 	int curAmmo;
 } CS_WEAPON;
 
+//size: 0x80
+typedef struct {
+	int collision;
+	int shotID;
+	int flags;
+	int inUse;
+	int xPos;
+	int yPos;
+	int xVel;
+	int yVel;
+	int unk1;
+	int unk2;
+	int state;
+	int unk3;
+	int unk4;
+	int frameID;
+	int direction;
+	RECT frameRect;
+	int framesActive; // how many frames the bullet has been active
+	int unk5;
+	int maxFrame; // the max number of frames it can be alive
+	int damage;
+	int numHits;
+	RECT hitRect;
+	RECT sizeRect;
+} CS_BULLET;
+
 //VARs
 //npc
 extern CS_ENTITY* CS_npcTable;
@@ -145,6 +172,10 @@ extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
 extern void(*CS_fillRect)(RECT*, int);
 extern void(*CS_updateKeys)();
 extern int(*CS_escMenuLoop)(HWND window);
+
+extern void(*CS_createBullet)(int id, int x, int y, int direction);
+extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);
+extern void(*CS_createEffect)(int x, int y, int id, int mode);
 
 extern int(*CS_playerHitSquareBlock)();
 extern int(*CS_playerHitSlopeFloorA)();

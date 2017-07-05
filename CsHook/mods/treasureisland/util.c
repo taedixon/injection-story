@@ -54,3 +54,13 @@ void drawRect(RECT* fr, int col) {
 	fr2.top = fr2.bottom - 1;
 	CS_fillRect(&fr2, col);
 }
+
+
+void toScreenSpace(int* x, int* y, int cam_x, int cam_y) {
+	*x &= -CS_SUBPX;
+	*y &= -CS_SUBPX;
+	*x -= cam_x;
+	*y -= cam_y;
+	*x /= CS_SUBPX;
+	*y /= CS_SUBPX;
+}

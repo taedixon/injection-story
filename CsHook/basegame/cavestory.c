@@ -70,7 +70,7 @@ int* CS_keyDown = (int*)0x49363C;
 unsigned short* CS_orgTempo = (unsigned short*)0x4A4E18;
 
 // 0x498548 NPC function pointer table
-void(**CS_npcFuncTable)(CS_ENTITY*) = (VOID(**)(CS_ENTITY*))0x498548;
+void(**CS_npcFuncTable)(CS_ENTITY*) = (void(**)(CS_ENTITY*))0x498548;
 
 int(*CS_randInt)(int, int) = (int(*)(int, int))0x40F350;
 BOOL(*CS_flipScreen)(HWND) = (BOOL(*)(HWND))0x40B340;
@@ -84,6 +84,11 @@ void(*CS_putBitmap3)(RECT*, int, int, RECT*, int)
 void(*CS_fillRect)(RECT*, int) = (void(*)(RECT*, int)) 0x40C9E0;
 void(*CS_updateKeys)() = (void(*)())0x4122E0;
 int(*CS_escMenuLoop)(HWND window) = (int(*)(HWND))0x40DD70;
+
+void(*CS_createBullet)(int id, int x, int y, int direction) = (void(*)(int, int, int, int))0x403F80;
+void(*CS_createNPC)(int, int, int, int, int, int, int, int)
+					= (void(*)(int, int, int, int, int, int, int, int))0x46EFD0;
+void(*CS_createEffect)(int, int, int, int) = (void(*)(int, int, int, int))0x40AC90;
 
 
 int(*CS_playerHitSquareBlock)(int, int) = (int(*)(int, int))0x416E30;
