@@ -147,6 +147,8 @@ extern int* CS_keyHeld;
 extern int* CS_keyPressed;
 extern int* CS_controlMode;
 extern int* CS_gameState;
+extern int* CS_isShowingMapName;
+extern int* CS_mapNameTimer;
 //script
 extern char** CS_scriptPointer;
 extern int* CS_scriptOffset;
@@ -175,10 +177,11 @@ extern void(*CS_playSong)(int);
 extern void(*CS_playSound)(int sfxid, int channel);
 extern unsigned char(*CS_GetTileType)(int, int);
 extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
-extern void(*CS_fillRect)(RECT*, int);
+extern void(*CS_fillRect)(RECT*, int colour);
 extern void(*CS_updateKeys)();
 extern int(*CS_escMenuLoop)(HWND window);
 extern void(*CS_setMapName)(char* name);
+extern void(*CS_runEvent)(int eve);
 
 extern void(*CS_createBullet)(int id, int x, int y, int direction);
 extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);
@@ -205,7 +208,9 @@ extern int(*CS_playerHitWindDown)();
 #define CS_BM_TITLE 0
 #define CS_BM_TILESET 2
 #define CS_BM_ARMS 11
+#define CS_BM_MNA 13
 #define CS_BM_PLAYER 16
+#define CS_BM_TEXTBOX 26
 
 #define CS_SUBPX 0x200
 

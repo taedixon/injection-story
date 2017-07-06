@@ -53,6 +53,8 @@ int* CS_keyHeld = (int*)0x49E210;
 int* CS_keyPressed = (int*) 0x49E214;
 int* CS_controlMode = (int*)0x49E64C;
 int* CS_gameState = (int*)0x49E1E8;
+int* CS_isShowingMapName = (int*)0x49E590;
+int* CS_mapNameTimer = (int*)0x49E594;
 
 //script
 char** CS_scriptPointer = (char**)0x4A5AD8;
@@ -93,6 +95,7 @@ void(*CS_fillRect)(RECT*, int) = (void(*)(RECT*, int)) 0x40C9E0;
 void(*CS_updateKeys)() = (void(*)())0x4122E0;
 int(*CS_escMenuLoop)(HWND window) = (int(*)(HWND))0x40DD70;
 void(*CS_setMapName)(char* name) = (void(*)(char*))0x4140F0;
+void(*CS_runEvent)(int eve) = (void(*)(int))0x421990;
 
 void(*CS_createBullet)(int id, int x, int y, int direction) = (void(*)(int, int, int, int))0x403F80;
 void(*CS_createNPC)(int, int, int, int, int, int, int, int)

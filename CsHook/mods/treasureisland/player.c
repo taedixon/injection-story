@@ -355,10 +355,61 @@ void playerCheckTiles(void)
 		*CS_playerTileFlags |= 0x100u;
 }
 
-void drawPlayerLife(char show) {
+void drawPlayerLife(char canControl) {
+	int contextSegments = 8;
+	int contextX, contextY;
+	int i;
+	RECT uiRect = {
+		0, 0, 320, 24
+	};
+	CS_fillRect(&uiRect, 0x404040);
+
+	//draw the con(text) bar
+	uiRect.left = 152;
+	uiRect.top = 80;
+	uiRect.right = uiRect.left + 16;
+	uiRect.bottom = uiRect.top + 16;
+	contextX = (320 - (contextSegments + 2) * 16)/2;
+	contextY = (24 - 16) / 2;
+	CS_putBitmap3(CS_fullScreenRect, contextX, contextY, &uiRect, CS_BM_TEXTBOX);
+	uiRect.left += 16;
+	uiRect.right += 16;
+	for (i = 0; i < contextSegments; i++) {
+		contextX += 16;
+		CS_putBitmap3(CS_fullScreenRect, contextX, contextY, &uiRect, CS_BM_TEXTBOX);
+	}
+	contextX += 16;
+	uiRect.left += 16;
+	uiRect.right += 16;
+	CS_putBitmap3(CS_fullScreenRect, contextX, contextY, &uiRect, CS_BM_TEXTBOX);
+}
+
+void drawPlayerArms(char canControl) {
 
 }
 
-void drawPlayerArms(char show) {
+void drawMapName(int mode) {
+	if (*CS_isShowingMapName) {
+		int tMax = 160;
+		int scrollTime = 12;
+		RECT clipRect = {
+			88, 7, 232, 16
+		};
+		RECT* CS_mapNameRect = (RECT*)0x493650;
+		int timer = *CS_mapNameTimer;
+		int mnaX = 80;
+		int mnaY = 7;
+		if (timer < scrollTime) {
+			mnaY += scrollTime - timer;
+		} else if (timer >(tMax - scrollTime)) {
+			mnaY -= timer - (tMax - scrollTime);
+		}
+		CS_putBitmap3(&clipRect, mnaX, mnaY, CS_mapNameRect, CS_BM_MNA);
 
+		if (timer++ > tMax) {
+			*CS_isShowingMapName = 0;
+			timer = 0;
+		}
+		*CS_mapNameTimer = timer;
+	}
 }

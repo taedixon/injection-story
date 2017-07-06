@@ -6,3 +6,4 @@ void playerCheckTiles(void);
 
 void drawPlayerLife(char show);
 void drawPlayerArms(char show);
+void drawMapName(int ignored);

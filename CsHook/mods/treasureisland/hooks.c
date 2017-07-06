@@ -7,6 +7,7 @@
 #include "title.h"
 #include "weapon.h"
 #include "tsc.h"
+#include "npc.h"
 
 void hook_treasureisland() {
 	CS_oldmapdata[0] = (int)&loadMap;
@@ -26,4 +27,8 @@ void hook_treasureisland() {
 	CS_oldmapdata[14] = (int)&drawPlayerArms;
 	CS_oldmapdata[15] = (int)&drawPlayerLife;
 	CS_oldmapdata[16] = (int)&tscHook;
+	CS_oldmapdata[17] = (int)&drawMapName;
+	
+	// entities
+	CS_npcFuncTable[19] = &NPC_touchTrigger;
 }
