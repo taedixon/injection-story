@@ -118,6 +118,7 @@ extern int* CS_playerFacingUp;
 extern int* CS_playerFacingDown;
 extern int* CS_playerFrameNum;
 extern int* CS_playerEquipFlags;
+extern int* CS_playerStateFlags;
 extern int* CS_playerTileFlags;
 extern int* CS_playerX;
 extern int* CS_playerY;
@@ -146,6 +147,11 @@ extern int* CS_keyHeld;
 extern int* CS_keyPressed;
 extern int* CS_controlMode;
 extern int* CS_gameState;
+//script
+extern char** CS_scriptPointer;
+extern int* CS_scriptOffset;
+extern unsigned char* CS_tscState;
+extern int* CS_currentFacepic;
 //keys
 extern int* CS_keyJump;
 extern int* CS_keyShoot;
@@ -172,6 +178,7 @@ extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
 extern void(*CS_fillRect)(RECT*, int);
 extern void(*CS_updateKeys)();
 extern int(*CS_escMenuLoop)(HWND window);
+extern void(*CS_setMapName)(char* name);
 
 extern void(*CS_createBullet)(int id, int x, int y, int direction);
 extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);

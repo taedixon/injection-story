@@ -22,6 +22,7 @@ int* CS_playerFacingUp = (int*)0x49E644;
 int* CS_playerFacingDown = (int*)0x49E648;
 int* CS_playerFrameNum = (int*)0x49E678;
 int* CS_playerEquipFlags = (int*)0x49E650;
+int* CS_playerStateFlags = (int*)0x49E638;
 int* CS_playerTileFlags = (int*)0x49E63C;
 int* CS_playerX = (int*)0x49E654;
 int* CS_playerY = (int*)0x49E658;
@@ -52,6 +53,13 @@ int* CS_keyHeld = (int*)0x49E210;
 int* CS_keyPressed = (int*) 0x49E214;
 int* CS_controlMode = (int*)0x49E64C;
 int* CS_gameState = (int*)0x49E1E8;
+
+//script
+char** CS_scriptPointer = (char**)0x4A5AD8;
+unsigned char* CS_tscState = (unsigned char*)0x4A5ADC;
+int* CS_scriptOffset = (int*)0x4A5AE0;
+int* CS_currentFacepic = (int*)0x4A5B0C;
+
 //keys
 //int* CS_keyJump = (int*)0x493610; (dup?)
 //int* CS_keyShoot = (int*)0x493614; (dup?)
@@ -84,6 +92,7 @@ void(*CS_putBitmap3)(RECT*, int, int, RECT*, int)
 void(*CS_fillRect)(RECT*, int) = (void(*)(RECT*, int)) 0x40C9E0;
 void(*CS_updateKeys)() = (void(*)())0x4122E0;
 int(*CS_escMenuLoop)(HWND window) = (int(*)(HWND))0x40DD70;
+void(*CS_setMapName)(char* name) = (void(*)(char*))0x4140F0;
 
 void(*CS_createBullet)(int id, int x, int y, int direction) = (void(*)(int, int, int, int))0x403F80;
 void(*CS_createNPC)(int, int, int, int, int, int, int, int)

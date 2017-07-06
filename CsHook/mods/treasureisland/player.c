@@ -354,3 +354,11 @@ void playerCheckTiles(void)
 	if (*CS_playerY > (*CS_globalWaterDepth) + 2048)
 		*CS_playerTileFlags |= 0x100u;
 }
+
+void drawPlayerLife(char show) {
+
+}
+
+void drawPlayerArms(char show) {
+
+}

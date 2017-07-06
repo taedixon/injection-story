@@ -6,6 +6,7 @@
 #include "player.h"
 #include "title.h"
 #include "weapon.h"
+#include "tsc.h"
 
 void hook_treasureisland() {
 	CS_oldmapdata[0] = (int)&loadMap;
@@ -22,4 +23,7 @@ void hook_treasureisland() {
 	CS_oldmapdata[11] = (int)&weapon_shovel;
 	CS_oldmapdata[12] = (int)&loadPxa;
 	CS_oldmapdata[13] = (int)&getPxa;
+	CS_oldmapdata[14] = (int)&drawPlayerArms;
+	CS_oldmapdata[15] = (int)&drawPlayerLife;
+	CS_oldmapdata[16] = (int)&tscHook;
 }
