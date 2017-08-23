@@ -1,9 +1,36 @@
 #include "stdafx.h"
 
 #include "weapon.h"
+#include "player.h"
 #include "util.h"
 
+int inputBuffer;
+
 void weapon_shovel(int lvl) {
+
+	if (inputBuffer && playerSpecialState == SSTATE_NONE) {
+		inputBuffer = 0;
+		setPlayerSpecialState(SSTATE_SWING);
+		return;
+	}
+
+	if (*CS_keyPressed & *CS_keyShoot 
+		&& *CS_playerTileFlags & 0x38 ) {
+		switch (playerSpecialState) {
+		case SSTATE_NONE:
+			setPlayerSpecialState(SSTATE_SWING);
+			break;
+		case SSTATE_SWING1:
+		case SSTATE_SWING2:
+			inputBuffer = 1;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void shovel_do_attack() {
 	int xOff;
 	int yOff = -0xA00;
 	if (*CS_playerDirection) {
@@ -12,9 +39,8 @@ void weapon_shovel(int lvl) {
 	} else {
 		xOff = -0x2000;
 	}
-	if (*CS_keyPressed & *CS_keyShoot) {
-		CS_createBullet(1, *CS_playerX + xOff, *CS_playerY + yOff, *CS_playerDirection);
-	}
+	CS_createBullet(1, *CS_playerX + xOff, *CS_playerY + yOff, *CS_playerDirection);
+	CS_playSound(0x2E + CS_randInt(0, 1), 1);
 }
 
 //ID 1 (replaces snake)

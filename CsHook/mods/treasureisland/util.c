@@ -64,3 +64,46 @@ void toScreenSpace(int* x, int* y, int cam_x, int cam_y) {
 	*x /= CS_SUBPX;
 	*y /= CS_SUBPX;
 }
+
+
+
+void drawTinyNumber(unsigned long value, int nDigit, int x, int y) {
+	const int digitW = 4;
+	const int digitH = 5;
+	int factor;
+	int val;
+	int digitOffset;
+	RECT digitRect;
+	if (nDigit <= 0) {
+		// draw just enough digits to hold the number
+		factor = 1;
+		while (value / factor > 0 && nDigit < 12) {
+			nDigit++;
+			factor *= 10;
+		}
+	}
+	digitRect.top = 120;
+	digitRect.bottom = digitRect.top + digitH;
+	digitOffset = (digitW + 1) * nDigit;
+	while (nDigit > 0) {
+		val = (int)(value / pow(10, nDigit - 1));
+		val %= 10;
+		digitRect.left = 80 + val*digitW;
+		digitRect.right = digitRect.left + digitW;
+		CS_putBitmap3(CS_fullScreenRect, x + digitOffset - nDigit*(digitW + 1), y, &digitRect, CS_BM_TEXTBOX);
+		nDigit--;
+	}
+}
+
+char intersect(RECT* r1, RECT* r2) {
+	if (r1->right < r2->left ||
+		r1->bottom < r2->top ||
+		r1->left > r2->right ||
+		r1->top > r2->bottom) {
+		return 0;
+	} else {
+		// eliminating all possibilities for the hitboxes to be disjoint,
+		// the only possibility that remains is that they overlap.
+		return 1;
+	}
+}

@@ -28,7 +28,11 @@ void hook_treasureisland() {
 	CS_oldmapdata[15] = (int)&drawPlayerLife;
 	CS_oldmapdata[16] = (int)&tscHook;
 	CS_oldmapdata[17] = (int)&drawMapName;
+	CS_oldmapdata[18] = (int)&playerAct;
+	CS_oldmapdata[19] = (int)&getCoin;
 	
 	// entities
 	CS_npcFuncTable[19] = &NPC_touchTrigger;
+	CS_npcFuncTable[29] = &NPC_boat;
+	// CS_npcFuncTable[34] = &NPC_messUpPalette; // doesnt work
 }

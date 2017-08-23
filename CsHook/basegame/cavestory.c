@@ -15,6 +15,8 @@ unsigned short* CS_mapHeight = (short*)0x49E588;
 unsigned char** CS_mapTiles = (unsigned char**)0x49E480;
 unsigned char* CS_pxaData = (unsigned char*)0x49E484;
 int* CS_globalWaterDepth = (int*)0x499C90;
+int* CS_camX = (int*)0x49E1C8;
+int* CS_camY = (int*)0x49E1CC;
 
 //player
 int* CS_playerDirection = (int*)0x49E640;
@@ -38,7 +40,9 @@ RECT* CS_playerSizeRect = (RECT*)0x49E68C;
 RECT* CS_playerWepRect = (RECT*)0x49E6AC;
 CS_WEAPON* CS_playerWeapons = (CS_WEAPON*)0x499BC8;
 int* CS_playerSelWeapon = (int*)0x499C68;
-int* CS_playerCurrentHealth = (int*)0x49E6CC;
+int* CS_playerInvulnTimer = (int*)0x49E6C8;
+short* CS_playerCurrentHealth = (int*)0x49E6CC;
+short* CS_playerMaxHealth = (int*)0x49E6D0;
 
 //sound
 int* CS_soundPointers = (int*)0x4A5568;
@@ -55,6 +59,8 @@ int* CS_controlMode = (int*)0x49E64C;
 int* CS_gameState = (int*)0x49E1E8;
 int* CS_isShowingMapName = (int*)0x49E590;
 int* CS_mapNameTimer = (int*)0x49E594;
+//ddraw
+LPDIRECTDRAWSURFACE7* CS_imgSurfaces = (LPDIRECTDRAWSURFACE7*)0x49D388;
 
 //script
 char** CS_scriptPointer = (char**)0x4A5AD8;
@@ -75,6 +81,10 @@ int* CS_keyLeft = (int*)0x493630;
 int* CS_keyUp = (int*)0x493634;
 int* CS_keyRight = (int*)0x493638;
 int* CS_keyDown = (int*)0x49363C;
+
+//custom/special
+int* CS_treasureActual = (int*)0x49E370;
+int* CS_treasureShown = (int*)0x49E374;
 
 
 unsigned short* CS_orgTempo = (unsigned short*)0x4A4E18;
@@ -103,6 +113,7 @@ void(*CS_createNPC)(int, int, int, int, int, int, int, int)
 void(*CS_createEffect)(int, int, int, int) = (void(*)(int, int, int, int))0x40AC90;
 
 
+void(*CS_playerAgility)(int) = (void(*)(int))0x4156C0;
 int(*CS_playerHitSquareBlock)(int, int) = (int(*)(int, int))0x416E30;
 int(*CS_playerHitSlopeFloorA)(int, int) = (int(*)(int, int))0x4171D0;
 int(*CS_playerHitSlopeFloorB)(int, int) = (int(*)(int, int))0x4172E0;

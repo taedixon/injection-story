@@ -1,9 +1,32 @@
 #include "stdafx.h"
 #include <cavestory.h>
 #include "util.h"
+#include "player.h"
+#include "weapon.h"
+#include "map.h"
 
+// custom player control vars
 int playerIdle = 0;
-int playerWalkTimer;
+int playerAnimState = 0;
+int playerAnimTimer = 0;
+int playerSpecialState = 0;
+
+int prevSpecialState = 0;
+int PrevTileFlags = 0;
+
+int treasure;
+int treasureActual;
+
+void setPlayerSpecialState(int newState) {
+	if (playerSpecialState != 0) {
+		prevSpecialState = playerSpecialState;
+	}
+	playerSpecialState = newState;
+	playerAnimState = 0;
+	playerAnimTimer = 0;
+	playerIdle = 0;
+}
+
 
 void control_topdown(char canControl) {
 	int held = *CS_keyHeld;
@@ -13,18 +36,22 @@ void control_topdown(char canControl) {
 	int friction = 10;
 	int frictionX, frictionY;
 
-	
-	if (held & *CS_keyLeft) {
-		*CS_playerXvel += -speed;
-	} 
-	if (held & *CS_keyUp) {
-		*CS_playerYvel += -speed;
-	} 
-	if (held & *CS_keyRight) {
-		*CS_playerXvel += speed;
-	} 
-	if (held & *CS_keyDown) {
-		*CS_playerYvel += speed;
+	if (canControl) {
+		if (held & *CS_keyLeft) {
+			*CS_playerXvel += -speed;
+		}
+		if (held & *CS_keyUp) {
+			*CS_playerYvel += -speed;
+		}
+		if (held & *CS_keyRight) {
+			*CS_playerXvel += speed;
+		}
+		if (held & *CS_keyDown) {
+			*CS_playerYvel += speed;
+		}
+		if (pressed & *CS_keyShoot) {
+			*CS_playerStateFlags |= 1;
+		}
 	}
 
 	vecFromAngle(&frictionX, &frictionY, friction, atan2(*CS_playerYvel, *CS_playerXvel));
@@ -46,7 +73,45 @@ void control_topdown(char canControl) {
 	*CS_playerCamY = *CS_playerY;
 }
 
+// called immediately after player agility code is run to allow us to
+// do some stuff without needing to rewrite it entirely.
+// gives us a chance to set special state in some conditions to 
+// transition to a different control mode.
+void _control_regular_postop() {
+
+}
+
+// if playerSpecialState is set, this gets called instead of regular player
+// controls for special behaviours
+void _control_override() {
+	switch (playerSpecialState) {
+	case SSTATE_SWING:
+		//fallthru
+	case SSTATE_SWING1:
+	case SSTATE_SWING2:
+		*CS_playerXvel -= *CS_playerXvel / 10;
+		//move down to ensure we maintain tile contact
+		*CS_playerYvel = 0x201;
+		//exit special state if we fall off the floor
+		if (!(*CS_playerTileFlags & 0x38)) {
+			playerSpecialState = SSTATE_NONE;
+		}
+		break;
+	}
+
+	*CS_playerX += *CS_playerXvel;
+	*CS_playerY += *CS_playerYvel;
+}
+
 void _drawPlayer_legacy(int camX, int camY) {
+
+	//don't draw on invuln blink frames
+	//don't draw if the player is D E A D
+	if (*CS_playerInvulnTimer & 4
+		|| *CS_playerCurrentHealth <= 0) {
+		return;
+	}
+
 	//NOTE does not draw air tank bubble
 	int wpnYOffset, wpnXOffset;
 	RECT playerRect = *CS_playerFrameRect;
@@ -86,8 +151,8 @@ void _drawPlayer_legacy(int camX, int camY) {
 		++weaponRect.top;
 	}
 	//draw the weapon
-	CS_putBitmap3(CS_fullScreenRect, playerScreenX + wpnXOffset,
-		playerScreenY + wpnYOffset, &weaponRect, CS_BM_ARMS);
+	//CS_putBitmap3(CS_fullScreenRect, playerScreenX + wpnXOffset,
+	//	playerScreenY + wpnYOffset, &weaponRect, CS_BM_ARMS);
 
 	//draw the player
 	if (*CS_playerEquipFlags & 0x40) {
@@ -95,7 +160,6 @@ void _drawPlayer_legacy(int camX, int camY) {
 		playerRect.bottom += 32;
 	}
 	CS_putBitmap3(CS_fullScreenRect, playerScreenX, playerScreenY, &playerRect, CS_BM_PLAYER);
-
 }
 
 void _drawPlayer_boat(int camX, int camY) {
@@ -129,7 +193,7 @@ void drawPlayer(int camX, int camY) {
 	switch (*CS_controlMode) {
 	case 0:
 		_drawPlayer_legacy(camX, camY);
-		_drawPlayer_debug(camX, camY);
+		//_drawPlayer_debug(camX, camY);
 		break;
 	case 1:
 		//NOTE change if boat gets different draw rules
@@ -138,14 +202,84 @@ void drawPlayer(int camX, int camY) {
 	}
 }
 
+void _calcFrame_ground(int* row, int* col) {
+	const int nWalkFrame = 6;
+	const int walkSpeed = 8;
+	const int nIdleFrame = 4;
+	const int idleSpeed = 12;
+	//player is on the ground
+	if (*CS_playerXvel != 0) {
+		// walking left/right
+		playerIdle = 0;
+		*row = 1;
+		if (++playerAnimTimer >= nWalkFrame*walkSpeed) {
+			playerAnimTimer = 0;
+		}
+		*col = playerAnimTimer / walkSpeed;
+	} else {
+		//idling on ground
+		playerAnimTimer = 0;
+		*row = 0;
+		if (++playerIdle >= nIdleFrame*idleSpeed) {
+			playerIdle = 0;
+		}
+		*col = playerIdle / idleSpeed;
+	}
+}
+
+void _calcFrame_air(int* row, int* col) {
+	//in the air
+	*row = 1;
+	int yv = *CS_playerYvel;
+	if (yv < -0x100) {
+		*col = 6;
+	} else if (yv < 0) {
+		*col = 7;
+	} else if (yv < 0x180) {
+		*col = 8;
+	} else {
+		*col = 9;
+	}
+}
+
+void _calcFrame_attack(int* row, int* col) {
+	const int N_SWING_FRAME = 6;
+	const int frameTiming[] = {
+		10, 8, 4, 4, 8, 8
+	};
+	if (playerSpecialState == SSTATE_SWING) {
+		if (prevSpecialState == SSTATE_SWING1) {
+			playerSpecialState = SSTATE_SWING2;
+		} else {
+			playerSpecialState = SSTATE_SWING1;
+		}
+	}
+
+	if (playerSpecialState == SSTATE_SWING1) {
+		*row = 2;
+	} else {
+		*row = 3;
+	}
+	*col = playerAnimState;
+	if (++playerAnimTimer >= frameTiming[playerAnimState]) {
+		playerAnimTimer = 0;
+		++playerAnimState;
+		if (playerAnimState == 3) {
+			// on this frame we want to begin the hurtbox
+			shovel_do_attack();
+		}
+		if (playerAnimState >= N_SWING_FRAME) {
+			treasureActual += 67913;
+			setPlayerSpecialState(SSTATE_NONE);
+		}
+	}
+}
+
+
 void _playerCalcFrame(int canControl) {
 	const int frameW = 48;
 	const int frameH = 48;
 	const int directionOffset = 240;
-	const int nIdleFrame = 4;
-	const int idleSpeed = 12;
-	const int nWalkFrame = 6;
-	const int walkSpeed = 8;
 
 	int frameRow = 0, frameCol = 0;
 
@@ -158,32 +292,19 @@ void _playerCalcFrame(int canControl) {
 
 
 	if ((*CS_playerTileFlags) & 0x38) {
-		//player is on the ground
-		if (*CS_playerXvel != 0) {
-			// walking left/right
-			playerIdle = 0;
-			frameRow = 1;
-			if (++playerWalkTimer >= nWalkFrame*walkSpeed) {
-				playerWalkTimer = 0;
-			}
-			frameCol = playerWalkTimer / walkSpeed;
-		} else {
-			//idling on ground
-			playerWalkTimer = 0;
-			frameRow = 0;
-			if (++playerIdle >= nIdleFrame*idleSpeed) {
-				playerIdle = 0;
-			}
-			frameCol = playerIdle / idleSpeed;
+		switch (playerSpecialState) {
+		case SSTATE_NONE:
+		default:
+			_calcFrame_ground(&frameRow, &frameCol);
+			break;
+		case SSTATE_SWING1:
+		case SSTATE_SWING2:
+		case SSTATE_SWING:
+			_calcFrame_attack(&frameRow, &frameCol);
+			break;
 		}
 	} else {
-		//in the air
-		frameRow = 1;
-		if (*CS_playerYvel < 0) {
-			frameCol = 2;
-		} else {
-			frameCol = 3;
-		}
+		_calcFrame_air(&frameRow, &frameCol);
 	}
 
 	CS_playerFrameRect->left = frameCol * frameW;
@@ -232,7 +353,7 @@ void playerCheckTiles(void)
 	int tileType;
 	int x, y; 
 	int tileX;
-	int tileY; 
+	int tileY;
 
 	tileX = *CS_playerX / 16 / CS_SUBPX;
 	tileY = *CS_playerY / 16 / CS_SUBPX;
@@ -241,6 +362,10 @@ void playerCheckTiles(void)
 			tileType = CS_GetTileType(x, y);
 			switch (tileType) {
 			case 5:
+			case 0x45:
+				//custom tile: one-way floor
+				*CS_playerTileFlags |= hitTile_oneway(x, y);
+				break;
 			case 0x41:
 			case 0x43:
 			case 0x46:
@@ -353,6 +478,11 @@ void playerCheckTiles(void)
 	}
 	if (*CS_playerY > (*CS_globalWaterDepth) + 2048)
 		*CS_playerTileFlags |= 0x100u;
+
+	// I think the game resets this before calling the tile checker
+	// so, we'll set this value at the end of the function
+	// rather than at the beginning like i'd prefer.
+	PrevTileFlags = *CS_playerTileFlags;
 }
 
 void drawPlayerLife(char canControl) {
@@ -360,32 +490,43 @@ void drawPlayerLife(char canControl) {
 	int contextX, contextY;
 	int i;
 	RECT uiRect = {
-		0, 0, 320, 24
+		0, 144, 320, 144+26
 	};
-	CS_fillRect(&uiRect, 0x404040);
+	//draw UI background
+	CS_putBitmap3(CS_fullScreenRect, 0, 0, &uiRect, CS_BM_TEXTBOX);
 
-	//draw the con(text) bar
-	uiRect.left = 152;
-	uiRect.top = 80;
-	uiRect.right = uiRect.left + 16;
-	uiRect.bottom = uiRect.top + 16;
-	contextX = (320 - (contextSegments + 2) * 16)/2;
-	contextY = (24 - 16) / 2;
-	CS_putBitmap3(CS_fullScreenRect, contextX, contextY, &uiRect, CS_BM_TEXTBOX);
-	uiRect.left += 16;
-	uiRect.right += 16;
-	for (i = 0; i < contextSegments; i++) {
-		contextX += 16;
+	uiRect.left = 236;
+	uiRect.right = 244;
+	int healthRectY = 40;
+	//draw the health blips
+	for (i = 0; i < 12 && i < *CS_playerMaxHealth; i++) {
+		contextX = 1 + (i % 4) * 8;
+		contextY = 1 + (i / 4) * 8;
+		uiRect.top = healthRectY;
+		if (i >= *CS_playerCurrentHealth) {
+			uiRect.top += 8;
+		}
+		uiRect.bottom = uiRect.top + 8;
 		CS_putBitmap3(CS_fullScreenRect, contextX, contextY, &uiRect, CS_BM_TEXTBOX);
 	}
-	contextX += 16;
-	uiRect.left += 16;
-	uiRect.right += 16;
-	CS_putBitmap3(CS_fullScreenRect, contextX, contextY, &uiRect, CS_BM_TEXTBOX);
+
 }
 
 void drawPlayerArms(char canControl) {
-
+	//draw the treasure counter 
+	if (treasure != treasureActual) {
+		int diff = treasureActual - treasure;
+		if (diff > 30) {
+			treasure += diff / 30;
+		} else {
+			if (diff > 0) {
+				treasure++;
+			} else {
+				treasure--;
+			}
+		}
+	}
+	drawTinyNumber(treasure, 14, 246, 14);
 }
 
 void drawMapName(int mode) {
@@ -412,4 +553,30 @@ void drawMapName(int mode) {
 		}
 		*CS_mapNameTimer = timer;
 	}
+}
+
+void playerAct(int canControl) {
+	if (*CS_playerStateFlags & 0x80) {
+		if (*CS_playerInvulnTimer > 0) {
+			--*CS_playerInvulnTimer;
+		} 
+		switch (*CS_controlMode) {
+		case 0:
+			if (playerSpecialState) {
+				_control_override();
+			} else {
+				//default, CS controls
+				CS_playerAgility(canControl);
+				_control_regular_postop();
+			}
+			break;
+		case 1:
+			control_topdown(canControl);
+			break;
+		}
+	}
+}
+
+void getCoin(int coinAmt) {
+
 }

@@ -1,6 +1,7 @@
 
 #pragma once
 #include "stdafx.h"
+#include <ddraw.h>
 
 #ifndef CAVESTORY_H
 #define CAVESTORY_H
@@ -112,6 +113,8 @@ extern unsigned short* CS_mapHeight;
 extern unsigned char** CS_mapTiles;
 extern unsigned char* CS_pxaData;
 extern int* CS_globalWaterDepth;
+extern int* CS_camX;
+extern int* CS_camY;
 //player
 extern int* CS_playerDirection;
 extern int* CS_playerFacingUp;
@@ -134,7 +137,9 @@ extern RECT* CS_playerSizeRect;
 extern RECT* CS_playerWepRect;
 extern CS_WEAPON* CS_playerWeapons;
 extern int* CS_playerSelWeapon;
-extern int* CS_playerCurrentHealth;
+extern int* CS_playerInvulnTimer;
+extern short* CS_playerMaxHealth;
+extern short* CS_playerCurrentHealth;
 //sound
 extern int* CS_soundPointers;
 extern unsigned short* CS_orgTempo;
@@ -149,6 +154,7 @@ extern int* CS_controlMode;
 extern int* CS_gameState;
 extern int* CS_isShowingMapName;
 extern int* CS_mapNameTimer;
+extern LPDIRECTDRAWSURFACE7* CS_imgSurfaces;
 //script
 extern char** CS_scriptPointer;
 extern int* CS_scriptOffset;
@@ -165,6 +171,10 @@ extern int* CS_keyLeft;
 extern int* CS_keyUp;
 extern int* CS_keyRight;
 extern int* CS_keyDown;
+
+//special/custon
+extern int* CS_treasureActual;
+extern int* CS_treasureShown;
 
 
 //FUNCs
@@ -187,6 +197,7 @@ extern void(*CS_createBullet)(int id, int x, int y, int direction);
 extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);
 extern void(*CS_createEffect)(int x, int y, int id, int mode);
 
+extern void(*CS_playerAgility)(int);
 extern int(*CS_playerHitSquareBlock)();
 extern int(*CS_playerHitSlopeFloorA)();
 extern int(*CS_playerHitSlopeFloorB)();

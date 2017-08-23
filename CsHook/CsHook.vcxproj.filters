@@ -63,6 +63,9 @@
     <ClInclude Include="mods\treasureisland\npc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mods\treasureisland\dd7.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CsHook.c">
@@ -99,6 +102,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mods\treasureisland\npc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mods\treasureisland\dd7.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

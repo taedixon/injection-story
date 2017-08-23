@@ -3,20 +3,23 @@
 #include <cavestory.h>
 
 #include "map.h"
+#include "util.h"
+#include "player.h"
 
-#define NUM_LAYER 4
-#define PHYSICAL_LAYER 2
 #define TILE_SIZE 16
 #define VIEW_TILE_H 16
 #define VIEW_TILE_W 21
 #define TILESET_W 16
 
-unsigned short* mapLayers[NUM_LAYER];
+unsigned short** mapLayers;
 unsigned char* pxaData = NULL;
 int pxaLen;
 
 int currentMapType = 0;
 int tileAnimTimer = 0;
+int physicalLayer = 2;
+unsigned int nLayer = 0;
+int fgSplit;
 
 // return 1 for success, 0 for failure
 int loadMap(char* mapName) {
@@ -25,7 +28,8 @@ int loadMap(char* mapName) {
 	unsigned short width, height;
 	unsigned int numTiles;
 	int result = 0;
-	int i;
+	int layerType;
+	unsigned int i;
 	FILE* fileHandle;
 
 	sprintf(mapBuffer, "%s/%s", CS_dataDirPath, mapName);
@@ -53,18 +57,50 @@ int loadMap(char* mapName) {
 			break;
 		case 0x21:
 			//allocate
+			nLayer = 4;
+			fgSplit = 2;
+			physicalLayer = 2;
 			*CS_mapTiles = malloc(numTiles);
-			for (i = 0; i < NUM_LAYER; i++) {
+			mapLayers = malloc(sizeof(unsigned short*)*nLayer);
+			for (i = 0; i < nLayer; i++) {
 				mapLayers[i] = malloc(numTiles * 2);
 				fread(mapLayers[i], 2, numTiles, fileHandle);
 			}
 			//copy physical layer to the legacy buffer
 			for (unsigned int i = 0; i < numTiles; i++) {
-				(*CS_mapTiles)[i] = (unsigned char)mapLayers[PHYSICAL_LAYER][i];
+				(*CS_mapTiles)[i] = (unsigned char)mapLayers[physicalLayer][i];
 			}
 			fclose(fileHandle);
 			result = 1;
 			break;
+		case 0x22:
+			*CS_mapTiles = malloc(numTiles);
+			fread(&nLayer, 4, 1, fileHandle);
+			mapLayers = malloc(sizeof(unsigned short*)*nLayer);
+			fgSplit = 0;
+			for (i = 0; i < nLayer; i++) {
+				mapLayers[i] = malloc(numTiles * 2);
+				//set the physical layer for PXA values
+				fread(&layerType, 4, 1, fileHandle);
+				if (layerType == 2) {
+					physicalLayer = i;
+				}
+				//check the first character in
+				fread(header, 1, 1, fileHandle);
+				if (header[0] == '*') {
+					fgSplit = i;
+				}
+				// ignore the (rest of the) layer name, because we won't use it.
+				fseek(fileHandle, 0x1F, SEEK_CUR);
+				fread(mapLayers[i], 2, numTiles, fileHandle);
+			}
+			//copy physical layer to the legacy buffer
+			for (unsigned int i = 0; i < numTiles; i++) {
+				(*CS_mapTiles)[i] = (unsigned char)mapLayers[physicalLayer][i];
+			}
+			fclose(fileHandle);
+			result = 1;
+
 		}
 		
 		fclose(fileHandle);
@@ -106,14 +142,16 @@ unsigned char _getPxa(unsigned int x, unsigned int y, unsigned int layer) {
 }
 
 unsigned char getPxa(unsigned int x, unsigned int y) {
-	return _getPxa(x, y, PHYSICAL_LAYER);
+	return _getPxa(x, y, physicalLayer);
 }
 
 void freeMap() {
-	for (int i = 0; i < NUM_LAYER; i++) {
+	unsigned int i;
+	for (i = 0; i < nLayer; i++) {
 		free(mapLayers[i]);
 		mapLayers[i] = NULL;
 	}
+	free(mapLayers);
 	*CS_mapTiles = NULL;
 }
 
@@ -149,7 +187,7 @@ void _drawStage_legacy(int camX, int camY, BOOLEAN front) {
 void _drawStage(int camX, int camY, unsigned int layer) {
 	int tframe = 0;
 	int type;
-	if (layer >= NUM_LAYER)
+	if (layer >= nLayer)
 		return;
 	unsigned short* tileLayer = mapLayers[layer];
 	if (!tileLayer)
@@ -162,6 +200,7 @@ void _drawStage(int camX, int camY, unsigned int layer) {
 			tframe = 0;
 			int offset = x + *CS_mapWidth * y;
 			unsigned int tileNum = tileLayer[offset];
+			//shortcut to save rendering time, tile 0 is always "empty"
 			if (tileNum == 0) {
 				continue;
 			}
@@ -185,11 +224,28 @@ void _drawStage(int camX, int camY, unsigned int layer) {
 			int screenY = TILE_SIZE * y - 8 - (camY / 512);
 			CS_putBitmap3(CS_fullScreenRect, screenX, screenY, &tileRect, CS_BM_TILESET);
 
+			/*
+			//DEBOOG
+			RECT tileHitbox = {
+				(x*TILE_SIZE + 2 - (TILE_SIZE / 2))*CS_SUBPX,
+				(y*TILE_SIZE - (TILE_SIZE / 2))*CS_SUBPX,
+				((x)*TILE_SIZE - 2 + (TILE_SIZE / 2))*CS_SUBPX,
+				((y)*TILE_SIZE)*CS_SUBPX
+			};
+
+			RECT screenRect = tileHitbox;
+			toScreenSpace(&screenRect.left, &screenRect.top, camX, camY);
+			toScreenSpace(&screenRect.right, &screenRect.bottom, camX, camY);
+			drawRect(&screenRect, 0xFF00FF);
+			//DEBOOG
+			*/
+
 		}
 	}
 }
 
 void drawStageBack(int cameraX, int cameraY) {
+	int i;
 	if (++tileAnimTimer >= 40320) {
 		tileAnimTimer = 0;
 	}
@@ -198,20 +254,56 @@ void drawStageBack(int cameraX, int cameraY) {
 		_drawStage_legacy(cameraX, cameraY, FALSE);
 		break;
 	case 0x21:
-		_drawStage(cameraX, cameraY, 0);
-		_drawStage(cameraX, cameraY, 1);
+	case 0x22:
+		for (i = 0; i < fgSplit; i++) {
+			_drawStage(cameraX, cameraY, i);
+		}
 		break;
 	}
 }
 
 void drawStageFront(int cameraX, int cameraY) {
+	unsigned int i;
 	switch (currentMapType) {
 	case 0x10:
 		_drawStage_legacy(cameraX, cameraY, TRUE);
 		break;
 	case 0x21:
-		_drawStage(cameraX, cameraY, 2);
-		_drawStage(cameraX, cameraY, 3);
+	case 0x22:
+		for (i = fgSplit; i < nLayer; i++) {
+			_drawStage(cameraX, cameraY, i);
+		}
 		break;
 	}
+}
+
+int hitTile_oneway(int x, int y) {
+	if (!(PrevTileFlags & 0x38) && (*CS_keyHeld & *CS_keyDown)) {
+		// don't collide with this tile if the player was 
+		// airborne in the previous frame and is holding down
+		return 0;
+	}
+	if (*CS_playerYvel > 0) {
+		//only can collide while moving downwards;
+		RECT playerHitbox = {
+			*CS_playerX - CS_playerHitRect->left,
+			//we only want to consider a small hitbox around the player's feet, not their whole shape
+			*CS_playerY + CS_playerHitRect->bottom - CS_SUBPX*2,
+			*CS_playerX + CS_playerHitRect->right,
+			*CS_playerY + CS_playerHitRect->bottom
+		};
+		RECT tileHitbox = {
+			(x*TILE_SIZE + 2 - (TILE_SIZE / 2))*CS_SUBPX,
+			(y*TILE_SIZE - (TILE_SIZE / 2))*CS_SUBPX,
+			((x)*TILE_SIZE - 2 + (TILE_SIZE / 2))*CS_SUBPX,
+			((y)*TILE_SIZE)*CS_SUBPX
+		};
+		
+		if (intersect(&playerHitbox, &tileHitbox)) {
+			*CS_playerYvel = 0x80;
+			*CS_playerY = tileHitbox.top - CS_playerHitRect->bottom;
+			return 8;
+		}
+	}
+	return 0;
 }

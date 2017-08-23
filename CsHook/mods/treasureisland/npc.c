@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "npc.h"
+#include "dd7.h"
+#include "util.h"
 
 int _isHitPlayer(CS_ENTITY* ent) {
 	RECT playerHitbox = {
@@ -15,16 +17,7 @@ int _isHitPlayer(CS_ENTITY* ent) {
 		ent->yPos + ent->hitRect.bottom
 	};
 
-	if (playerHitbox.right < npcHitbox.left ||
-		playerHitbox.bottom < npcHitbox.top ||
-		playerHitbox.left > npcHitbox.right ||
-		playerHitbox.top > npcHitbox.bottom) {
-		return 0;
-	} else {
-		// eliminating all possibilities for the hitboxes to be disjoint,
-		// the only possibility that remains is that they overlap.
-		return 1;
-	}
+	return intersect(&playerHitbox, &npcHitbox);
 }
 
 void NPC_touchTrigger(CS_ENTITY* self) {
@@ -35,4 +28,34 @@ void NPC_touchTrigger(CS_ENTITY* self) {
 		self->scriptState = 1;
 		CS_runEvent(self->eventNum);
 	}
+}
+
+void NPC_boat(CS_ENTITY* self) {
+	const int speedcap = 0x40;
+	RECT boatRect = {
+		0, 0, 482, 397
+	};
+
+	switch (self->scriptState) {
+	case 0:
+		self->scriptState = 1;
+		self->yVel = speedcap;
+	case 1:
+		if (++self->scriptTimer < 2) break;
+		self->scriptTimer = 0;
+		self->yVel--;
+		if (self->yVel <= -speedcap)
+			self->scriptState = 2;
+		break;
+	case 2:
+		if (++self->scriptTimer < 2) break;
+		self->scriptTimer = 0;
+		self->yVel++;
+		if (self->yVel >= speedcap)
+			self->scriptState = 1;
+	}
+
+	self->xPos += self->xVel;
+	self->yPos += self->yVel;
+	self->frameRect = boatRect;
 }
