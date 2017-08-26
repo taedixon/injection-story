@@ -15,7 +15,9 @@ int prevSpecialState = 0;
 int PrevTileFlags = 0;
 
 int treasure;
-int treasureActual;
+//actual treasure is stored in flagdata,
+//pointer will get setup in hooks.c
+int* treasureActual;
 
 void setPlayerSpecialState(int newState) {
 	if (playerSpecialState != 0) {
@@ -269,7 +271,7 @@ void _calcFrame_attack(int* row, int* col) {
 			shovel_do_attack();
 		}
 		if (playerAnimState >= N_SWING_FRAME) {
-			treasureActual += 67913;
+
 			setPlayerSpecialState(SSTATE_NONE);
 		}
 	}
@@ -514,8 +516,8 @@ void drawPlayerLife(char canControl) {
 
 void drawPlayerArms(char canControl) {
 	//draw the treasure counter 
-	if (treasure != treasureActual) {
-		int diff = treasureActual - treasure;
+	if (treasure != *treasureActual) {
+		int diff = *treasureActual - treasure;
 		if (diff > 30) {
 			treasure += diff / 30;
 		} else {
@@ -527,6 +529,8 @@ void drawPlayerArms(char canControl) {
 		}
 	}
 	drawTinyNumber(treasure, 14, 246, 14);
+	//write the player's treasure count to flagdata
+	
 }
 
 void drawMapName(int mode) {
@@ -578,5 +582,5 @@ void playerAct(int canControl) {
 }
 
 void getCoin(int coinAmt) {
-
+	*treasureActual += coinAmt * CS_randInt(20, 50);
 }

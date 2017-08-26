@@ -48,7 +48,6 @@ void bullet_shovel(CS_BULLET* self) {
 	self->framesActive++;
 	if (self->framesActive > self->maxFrame) {
 		self->inUse = 0;
-		CS_createEffect(self->xPos, self->yPos, 0x0F, 0);
 	}
 }
 

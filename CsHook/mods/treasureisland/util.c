@@ -95,6 +95,10 @@ void drawTinyNumber(unsigned long value, int nDigit, int x, int y) {
 	}
 }
 
+void createNumObj(int x, int y, int amount) {
+
+}
+
 char intersect(RECT* r1, RECT* r2) {
 	if (r1->right < r2->left ||
 		r1->bottom < r2->top ||

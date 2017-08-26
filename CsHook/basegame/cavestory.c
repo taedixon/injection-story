@@ -8,6 +8,8 @@ CS_MAPDATA* CS_mapdata = (CS_MAPDATA*)0x4BF000;
 // old mapdata (useful for scratch or hooks)
 int* CS_oldmapdata = (int*)0x4937b0;
 
+char* CS_flagdata = (char*)0x49DDA0;
+
 //map
 int* CS_bgMode = (int*)0x499C88;
 unsigned short* CS_mapWidth = (short*)0x49E586;
@@ -41,8 +43,8 @@ RECT* CS_playerWepRect = (RECT*)0x49E6AC;
 CS_WEAPON* CS_playerWeapons = (CS_WEAPON*)0x499BC8;
 int* CS_playerSelWeapon = (int*)0x499C68;
 int* CS_playerInvulnTimer = (int*)0x49E6C8;
-short* CS_playerCurrentHealth = (int*)0x49E6CC;
-short* CS_playerMaxHealth = (int*)0x49E6D0;
+short* CS_playerCurrentHealth = (short*)0x49E6CC;
+short* CS_playerMaxHealth = (short*)0x49E6D0;
 
 //sound
 int* CS_soundPointers = (int*)0x4A5568;
@@ -59,6 +61,8 @@ int* CS_controlMode = (int*)0x49E64C;
 int* CS_gameState = (int*)0x49E1E8;
 int* CS_isShowingMapName = (int*)0x49E590;
 int* CS_mapNameTimer = (int*)0x49E594;
+//this value determines whether to load or begin a new profile
+int* CS_titleCursor = (int*)0x49E1E4;
 //ddraw
 LPDIRECTDRAWSURFACE7* CS_imgSurfaces = (LPDIRECTDRAWSURFACE7*)0x49D388;
 
@@ -111,6 +115,7 @@ void(*CS_createBullet)(int id, int x, int y, int direction) = (void(*)(int, int,
 void(*CS_createNPC)(int, int, int, int, int, int, int, int)
 					= (void(*)(int, int, int, int, int, int, int, int))0x46EFD0;
 void(*CS_createEffect)(int, int, int, int) = (void(*)(int, int, int, int))0x40AC90;
+int(*CS_doesProfileExist)() = (int(*)())0x41CFC0;
 
 
 void(*CS_playerAgility)(int) = (void(*)(int))0x4156C0;

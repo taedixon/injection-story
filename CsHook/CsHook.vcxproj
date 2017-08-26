@@ -100,7 +100,6 @@
   <ItemGroup>
     <ClInclude Include="basegame\cavestory.h" />
     <ClInclude Include="CsHook.h" />
-    <ClInclude Include="mods\treasureisland\dd7.h" />
     <ClInclude Include="mods\treasureisland\hooks.h" />
     <ClInclude Include="mods\treasureisland\map.h" />
     <ClInclude Include="mods\treasureisland\npc.h" />
@@ -123,7 +122,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\dd7.c" />
     <ClCompile Include="mods\treasureisland\npc.c" />
     <ClCompile Include="mods\treasureisland\title.c" />
     <ClCompile Include="mods\treasureisland\hooks.c" />

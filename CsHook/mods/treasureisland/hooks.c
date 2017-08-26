@@ -8,6 +8,9 @@
 #include "weapon.h"
 #include "tsc.h"
 #include "npc.h"
+#include "util.h"
+
+extern int* treasureActual;
 
 void hook_treasureisland() {
 	CS_oldmapdata[0] = (int)&loadMap;
@@ -30,9 +33,12 @@ void hook_treasureisland() {
 	CS_oldmapdata[17] = (int)&drawMapName;
 	CS_oldmapdata[18] = (int)&playerAct;
 	CS_oldmapdata[19] = (int)&getCoin;
+	CS_oldmapdata[20] = (int)&createNumObj;
 	
 	// entities
 	CS_npcFuncTable[19] = &NPC_touchTrigger;
 	CS_npcFuncTable[29] = &NPC_boat;
-	// CS_npcFuncTable[34] = &NPC_messUpPalette; // doesnt work
+	CS_npcFuncTable[78] = &NPC_pot;
+
+	treasureActual = (int*)&CS_flagdata[996];
 }

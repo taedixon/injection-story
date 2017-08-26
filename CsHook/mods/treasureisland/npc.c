@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "npc.h"
-#include "dd7.h"
 #include "util.h"
 
 int _isHitPlayer(CS_ENTITY* ent) {
@@ -58,4 +57,19 @@ void NPC_boat(CS_ENTITY* self) {
 	self->xPos += self->xVel;
 	self->yPos += self->yVel;
 	self->frameRect = boatRect;
+}
+
+void NPC_pot(CS_ENTITY* self) {
+	// initialize the pot with a random graphic
+	// and set its XP equal to its event #
+	if (!self->scriptState) {
+		self->scriptState = 1;
+		self->xp = self->eventNum;
+
+		int potGfx = CS_randInt(0, 3);
+		self->frameRect.top = 88;
+		self->frameRect.bottom = 120;
+		self->frameRect.left = 256 + potGfx * 0x10;
+		self->frameRect.right = self->frameRect.left + 0x10;
+	}
 }

@@ -106,6 +106,7 @@ typedef struct {
 extern CS_ENTITY* CS_npcTable;
 //map
 extern CS_MAPDATA* CS_mapdata;
+extern char* CS_flagdata;
 extern int* CS_oldmapdata;
 extern int* CS_bgMode;
 extern unsigned short* CS_mapWidth;
@@ -155,6 +156,7 @@ extern int* CS_gameState;
 extern int* CS_isShowingMapName;
 extern int* CS_mapNameTimer;
 extern LPDIRECTDRAWSURFACE7* CS_imgSurfaces;
+extern int* CS_titleCursor;
 //script
 extern char** CS_scriptPointer;
 extern int* CS_scriptOffset;
@@ -196,6 +198,7 @@ extern void(*CS_runEvent)(int eve);
 extern void(*CS_createBullet)(int id, int x, int y, int direction);
 extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);
 extern void(*CS_createEffect)(int x, int y, int id, int mode);
+extern int(*CS_doesProfileExist)();
 
 extern void(*CS_playerAgility)(int);
 extern int(*CS_playerHitSquareBlock)();
@@ -221,6 +224,7 @@ extern int(*CS_playerHitWindDown)();
 #define CS_BM_ARMS 11
 #define CS_BM_MNA 13
 #define CS_BM_PLAYER 16
+#define CS_BM_SYM 20
 #define CS_BM_TEXTBOX 26
 
 #define CS_SUBPX 0x200
