@@ -14,10 +14,12 @@ int playerSpecialState = 0;
 int prevSpecialState = 0;
 int PrevTileFlags = 0;
 
-int treasure;
+int treasure = 0;
 //actual treasure is stored in flagdata,
 //pointer will get setup in hooks.c
 int* treasureActual;
+int treasureTimer = 0;
+int treasureNumSpawnPoint;
 
 void setPlayerSpecialState(int newState) {
 	if (playerSpecialState != 0) {
@@ -560,10 +562,17 @@ void drawMapName(int mode) {
 }
 
 void playerAct(int canControl) {
+	treasureNumSpawnPoint = *CS_playerY - CS_playerHitRect->top;
 	if (*CS_playerStateFlags & 0x80) {
 		if (*CS_playerInvulnTimer > 0) {
 			--*CS_playerInvulnTimer;
-		} 
+		}
+		if (treasureTimer > 0) {
+			--treasureTimer;
+		} else if (*CS_expToGain) {
+			CS_createNumberObject(CS_playerX, &treasureNumSpawnPoint, *CS_expToGain);
+			*CS_expToGain = 0;
+		}
 		switch (*CS_controlMode) {
 		case 0:
 			if (playerSpecialState) {
@@ -582,5 +591,12 @@ void playerAct(int canControl) {
 }
 
 void getCoin(int coinAmt) {
-	*treasureActual += coinAmt * CS_randInt(20, 50);
+	int amtGained = coinAmt * CS_randInt(20, 50);
+
+	*treasureActual += amtGained;
+	*CS_expToGain += amtGained;
+}
+
+void resetTreasureCount() {
+	treasure = 0;
 }

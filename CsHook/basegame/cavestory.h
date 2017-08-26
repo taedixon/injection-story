@@ -101,11 +101,25 @@ typedef struct {
 	RECT sizeRect;
 } CS_BULLET;
 
+typedef struct {
+	int isActive;
+	int* targetX;
+	int* targetY;
+	int field_c;
+	int value;
+	int field_14;
+	RECT frameRect;
+} CS_NUM_OBJ;
+
 //VARs
 //npc
 extern CS_ENTITY* CS_npcTable;
+//nums
+extern int* CS_lastUsedNumSlot;
+extern CS_NUM_OBJ* CS_numbers;
 //map
 extern CS_MAPDATA* CS_mapdata;
+
 extern char* CS_flagdata;
 extern int* CS_oldmapdata;
 extern int* CS_bgMode;
@@ -141,6 +155,7 @@ extern int* CS_playerSelWeapon;
 extern int* CS_playerInvulnTimer;
 extern short* CS_playerMaxHealth;
 extern short* CS_playerCurrentHealth;
+extern int* CS_expToGain;
 //sound
 extern int* CS_soundPointers;
 extern unsigned short* CS_orgTempo;
@@ -188,17 +203,20 @@ extern void(*CS_PlayOrganyaMusic)();
 extern void(*CS_playSong)(int);
 extern void(*CS_playSound)(int sfxid, int channel);
 extern unsigned char(*CS_GetTileType)(int, int);
-extern void(*CS_putBitmap3)(RECT*, int, int, RECT*, int);
+extern void(*CS_putBitmap3)(RECT* clipRect, int x, int y, RECT* srcRect, int srcBmp);
+extern void(*CS_surfaceBlt)(int x, int y, RECT* srcRect, int dstBmp, int srcBmp);
 extern void(*CS_fillRect)(RECT*, int colour);
+extern void(*CS_fillSurfaceRect)(RECT*, int colour, int bmpID);
 extern void(*CS_updateKeys)();
 extern int(*CS_escMenuLoop)(HWND window);
 extern void(*CS_setMapName)(char* name);
 extern void(*CS_runEvent)(int eve);
+extern int(*CS_doesProfileExist)();
+extern void(*CS_createNumberObject)(int* targetX, int* targetY, int amt);
 
 extern void(*CS_createBullet)(int id, int x, int y, int direction);
 extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);
 extern void(*CS_createEffect)(int x, int y, int id, int mode);
-extern int(*CS_doesProfileExist)();
 
 extern void(*CS_playerAgility)(int);
 extern int(*CS_playerHitSquareBlock)();
@@ -226,6 +244,7 @@ extern int(*CS_playerHitWindDown)();
 #define CS_BM_PLAYER 16
 #define CS_BM_SYM 20
 #define CS_BM_TEXTBOX 26
+#define CS_BM_NUMBERBUF 29
 
 #define CS_SUBPX 0x200
 

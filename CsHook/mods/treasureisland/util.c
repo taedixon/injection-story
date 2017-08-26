@@ -95,8 +95,87 @@ void drawTinyNumber(unsigned long value, int nDigit, int x, int y) {
 	}
 }
 
-void createNumObj(int x, int y, int amount) {
+void createNumObj(int* x, int* y, int amount) {
+	const int DIGIT_W = 8;
 
+	RECT digitRect;
+	CS_NUM_OBJ* nums = CS_numbers;
+	int i;
+	int cNum;
+	int displayW;
+	int isNegative = 0;
+	int factor;
+	int nDigit = 0;
+
+	for (i = 0; i < 16; i++) {
+		if (nums[i].isActive && nums[i].targetX == x && !((nums[i].value ^ amount) & 0x80000000)) {
+			//if the number is tracking the same target and has the same sign
+			break;
+		}
+	}
+	if (i == 16) {
+		cNum = *CS_lastUsedNumSlot;
+		*CS_lastUsedNumSlot += 1;
+		if (*CS_lastUsedNumSlot == 16) {
+			*CS_lastUsedNumSlot = 0;
+		}
+		nums[cNum].field_14 = 0;
+		nums[cNum].field_c = 0;
+		nums[cNum].value = amount;
+	} else {
+		cNum = i;
+		nums[cNum].field_14 = 32;
+		nums[cNum].value += amount;
+		amount = nums[cNum].value;
+	}
+	if (amount < 0) {
+		isNegative = 1;
+		amount = -amount;
+	}
+	//figure out how many digits there will be
+	factor = 1;
+	while (amount / factor > 0 && nDigit < 12) {
+		nDigit++;
+		factor *= 10;
+	}
+
+	//setup the object's framerect etc
+	nums[cNum].isActive = 1;
+	nums[cNum].targetX = x;
+	nums[cNum].targetY = y;
+	nums[cNum].frameRect.left = 0;
+	nums[cNum].frameRect.top = DIGIT_W * cNum;
+	nums[cNum].frameRect.right = (nDigit + 1) * DIGIT_W;
+	nums[cNum].frameRect.bottom = DIGIT_W * (cNum + 1);
+
+	//clear the drawing area
+	CS_fillSurfaceRect(&nums[cNum].frameRect, 0, CS_BM_NUMBERBUF);
+
+	//draw the plus/minus
+	digitRect.top = 48;
+	digitRect.bottom = 56;
+	digitRect.left = 32;
+	if (isNegative) {
+		digitRect.left += DIGIT_W;
+	}
+	digitRect.right = digitRect.left + 8;
+	CS_surfaceBlt(0, nums[cNum].frameRect.top, &digitRect,  CS_BM_NUMBERBUF, CS_BM_TEXTBOX);
+
+	//draw the actual numbers
+	digitRect.top = 56;
+	if (isNegative) {
+		digitRect.top += DIGIT_W;
+	}
+	digitRect.bottom = digitRect.top + DIGIT_W;
+	int digitOffset = DIGIT_W * (nDigit+1);
+	while (nDigit > 0) {
+		i = (int)(amount / pow(10, nDigit - 1));
+		i %= 10;
+		digitRect.left = i*DIGIT_W;
+		digitRect.right = digitRect.left + DIGIT_W;
+		CS_surfaceBlt(digitOffset - nDigit*(DIGIT_W), nums[cNum].frameRect.top, &digitRect, CS_BM_NUMBERBUF, CS_BM_TEXTBOX);
+		nDigit--;
+	}
 }
 
 char intersect(RECT* r1, RECT* r2) {

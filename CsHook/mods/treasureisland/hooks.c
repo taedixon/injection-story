@@ -10,8 +10,6 @@
 #include "npc.h"
 #include "util.h"
 
-extern int* treasureActual;
-
 void hook_treasureisland() {
 	CS_oldmapdata[0] = (int)&loadMap;
 	CS_oldmapdata[1] = (int)&freeMap;

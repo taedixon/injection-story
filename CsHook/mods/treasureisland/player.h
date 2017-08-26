@@ -11,8 +11,11 @@ void playerAct(int canControl);
 void getCoin(int coinAmt);
 
 void setPlayerSpecialState(int newState);
+void resetTreasureCount();
+
 extern int playerSpecialState;
 extern int PrevTileFlags;
+extern int* treasureActual;
 
 
 enum PLAYER_SPECIAL_STATES {

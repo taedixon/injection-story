@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "cavestory.h"
 #include "title.h"
+#include "player.h"
 
 // this one's a bit tricky because the title screen
 // actually contains the hook for this DLL. so,
@@ -9,6 +10,7 @@
 int doTitle(HWND window) {
 	const int ANIM_SPEED = 8;
 	const int CURSOR_FRAMES = 6;
+	resetTreasureCount();
 
 	*CS_gameState = 0;
 	RECT frameRect = { 0, 0, 320, 240 };

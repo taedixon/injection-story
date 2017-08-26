@@ -10,6 +10,9 @@ int* CS_oldmapdata = (int*)0x4937b0;
 
 char* CS_flagdata = (char*)0x49DDA0;
 
+int* CS_lastUsedNumSlot = (int*)0x4A5F90;
+CS_NUM_OBJ* CS_numbers = (CS_NUM_OBJ*)0x4A5F98;
+
 //map
 int* CS_bgMode = (int*)0x499C88;
 unsigned short* CS_mapWidth = (short*)0x49E586;
@@ -45,6 +48,7 @@ int* CS_playerSelWeapon = (int*)0x499C68;
 int* CS_playerInvulnTimer = (int*)0x49E6C8;
 short* CS_playerCurrentHealth = (short*)0x49E6CC;
 short* CS_playerMaxHealth = (short*)0x49E6D0;
+int* CS_expToGain = (int*)0x49E6C4;
 
 //sound
 int* CS_soundPointers = (int*)0x4A5568;
@@ -105,7 +109,9 @@ void(*CS_playSound)(int, int) = (void(*)(int, int))0x420640;
 unsigned char(*CS_GetTileType)(int, int) = (unsigned char(*)(int, int))0x4139A0;
 void(*CS_putBitmap3)(RECT*, int, int, RECT*, int) 
 					= (void(*)(RECT*, int, int, RECT*, int)) 0x40C3C0;
+void(*CS_surfaceBlt)(int, int, RECT*, int, int) = (void(*)(int, int, RECT*, int, int))0x40C7A0;
 void(*CS_fillRect)(RECT*, int) = (void(*)(RECT*, int)) 0x40C9E0;
+void(*CS_fillSurfaceRect)(RECT*, int, int) = (void(*)(RECT*, int, int)) 0x40CA80;
 void(*CS_updateKeys)() = (void(*)())0x4122E0;
 int(*CS_escMenuLoop)(HWND window) = (int(*)(HWND))0x40DD70;
 void(*CS_setMapName)(char* name) = (void(*)(char*))0x4140F0;
@@ -116,6 +122,7 @@ void(*CS_createNPC)(int, int, int, int, int, int, int, int)
 					= (void(*)(int, int, int, int, int, int, int, int))0x46EFD0;
 void(*CS_createEffect)(int, int, int, int) = (void(*)(int, int, int, int))0x40AC90;
 int(*CS_doesProfileExist)() = (int(*)())0x41CFC0;
+void(*CS_createNumberObject)(int*, int*, int) = (void(*)(int*, int*, int))0x425BF0;
 
 
 void(*CS_playerAgility)(int) = (void(*)(int))0x4156C0;
