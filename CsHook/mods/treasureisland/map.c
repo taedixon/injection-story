@@ -156,6 +156,13 @@ void freeMap() {
 }
 
 
+void setTile(unsigned int x, unsigned int y, unsigned int layer, unsigned int newType) {
+	int tilePos = (y * *CS_mapWidth) + x;
+	if (tilePos < (*CS_mapWidth * *CS_mapHeight) && layer < nLayer) {
+		mapLayers[layer][tilePos] = newType;
+	}
+}
+
 void _drawStage_legacy(int camX, int camY, BOOLEAN front) {
 	//sanity check
 	if (!*CS_mapTiles) 

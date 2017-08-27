@@ -9,3 +9,5 @@ void drawStageBack(int cameraX, int cameraY);
 void drawStageFront(int cameraX, int cameraY);
 
 int hitTile_oneway(int x, int y);
+
+void setTile(unsigned int x, unsigned int y, unsigned int layer, unsigned int type);

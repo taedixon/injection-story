@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "player.h"
+#include "map.h"
+
 // return 1 to finish command and halt parsing
 // return 0 to finish command and continue parsing
 // return -1 to continue searching for existing command
 int tscHook() {
 	char* nextCommand;
-	int argVal;
+	int argVal, arg2, arg3, arg4;
 	char strBuf[32];
 
 	char* scriptPointer = *CS_scriptPointer + *CS_scriptOffset;
@@ -48,6 +50,22 @@ int tscHook() {
 		
 		*CS_scriptOffset += 12;
 
+		return 0;
+	} else if (currentCommand == *(int*)"<CMP") {
+		//custom CMP, specifying which layer to set the tile to
+		//<CMP xTile : yTile : target : layer
+		*CS_scriptOffset += 4;
+		argVal = CS_atoi(*CS_scriptOffset);
+		*CS_scriptOffset += 5;
+		arg2 = CS_atoi(*CS_scriptOffset);
+		*CS_scriptOffset += 5;
+		arg3 = CS_atoi(*CS_scriptOffset);
+		*CS_scriptOffset += 5;
+		arg4 = CS_atoi(*CS_scriptOffset);
+
+		setTile(argVal, arg2, arg4, arg3);
+
+		*CS_scriptOffset += 5;
 		return 0;
 	}
 

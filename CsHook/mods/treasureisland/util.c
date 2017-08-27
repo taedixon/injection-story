@@ -102,7 +102,6 @@ void createNumObj(int* x, int* y, int amount) {
 	CS_NUM_OBJ* nums = CS_numbers;
 	int i;
 	int cNum;
-	int displayW;
 	int isNegative = 0;
 	int factor;
 	int nDigit = 0;

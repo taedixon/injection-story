@@ -211,6 +211,7 @@ extern void(*CS_updateKeys)();
 extern int(*CS_escMenuLoop)(HWND window);
 extern void(*CS_setMapName)(char* name);
 extern void(*CS_runEvent)(int eve);
+extern int(*CS_atoi)(int scriptOffset);
 extern int(*CS_doesProfileExist)();
 extern void(*CS_createNumberObject)(int* targetX, int* targetY, int amt);
 
@@ -235,6 +236,8 @@ extern int(*CS_playerHitWindLeft)();
 extern int(*CS_playerHitWindUp)();
 extern int(*CS_playerHitWindRight)();
 extern int(*CS_playerHitWindDown)();
+
+extern void(*CS_killNpc)(CS_ENTITY* npc, int shouldVanish);
 
 //constants
 #define CS_BM_TITLE 0

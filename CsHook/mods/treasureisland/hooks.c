@@ -32,11 +32,13 @@ void hook_treasureisland() {
 	CS_oldmapdata[18] = (int)&playerAct;
 	CS_oldmapdata[19] = (int)&getCoin;
 	CS_oldmapdata[20] = (int)&createNumObj;
+	CS_oldmapdata[21] = (int)&isHitPlayer;
 	
 	// entities
 	CS_npcFuncTable[19] = &NPC_touchTrigger;
 	CS_npcFuncTable[29] = &NPC_boat;
 	CS_npcFuncTable[78] = &NPC_pot;
+	CS_npcFuncTable[79] = &NPC_potShard;
 
 	treasureActual = (int*)&CS_flagdata[996];
 }

@@ -116,6 +116,7 @@ void(*CS_updateKeys)() = (void(*)())0x4122E0;
 int(*CS_escMenuLoop)(HWND window) = (int(*)(HWND))0x40DD70;
 void(*CS_setMapName)(char* name) = (void(*)(char*))0x4140F0;
 void(*CS_runEvent)(int eve) = (void(*)(int))0x421990;
+int(*CS_atoi)(int scriptOffset) = (int(*)(int))0x421900;
 
 void(*CS_createBullet)(int id, int x, int y, int direction) = (void(*)(int, int, int, int))0x403F80;
 void(*CS_createNPC)(int, int, int, int, int, int, int, int)
@@ -142,6 +143,8 @@ int(*CS_playerHitWindLeft)(int, int) = (int(*)(int, int))0x417C00;
 int(*CS_playerHitWindUp)(int, int) = (int(*)(int, int))0x417C90;
 int(*CS_playerHitWindRight)(int, int) = (int(*)(int, int))0x417D20;
 int(*CS_playerHitWindDown)(int, int) = (int(*)(int, int))0x41DB0;
+
+void(*CS_killNpc)(CS_ENTITY* npc, int shouldVanish) = (void(*)(CS_ENTITY*, int))0x471B80;
 
 
 //0x421570 - destroy bitmap objects
