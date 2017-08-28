@@ -188,6 +188,7 @@ extern int* CS_keyLeft;
 extern int* CS_keyUp;
 extern int* CS_keyRight;
 extern int* CS_keyDown;
+extern int* CS_keyMap;
 
 //special/custon
 extern int* CS_treasureActual;
@@ -214,6 +215,7 @@ extern void(*CS_runEvent)(int eve);
 extern int(*CS_atoi)(int scriptOffset);
 extern int(*CS_doesProfileExist)();
 extern void(*CS_createNumberObject)(int* targetX, int* targetY, int amt);
+extern int(*CS_checkFlag)(int flagID);
 
 extern void(*CS_createBullet)(int id, int x, int y, int direction);
 extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);

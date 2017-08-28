@@ -45,7 +45,7 @@ int tscHook() {
 		if (argVal > 0) {
 			*treasureActual += argVal;
 			*CS_expToGain += argVal;
-			CS_playSound(14, 1);
+			CS_playSound(29, 1);
 		}
 		
 		*CS_scriptOffset += 12;
@@ -65,7 +65,7 @@ int tscHook() {
 
 		setTile(argVal, arg2, arg4, arg3);
 
-		*CS_scriptOffset += 5;
+		*CS_scriptOffset += 4;
 		return 0;
 	}
 

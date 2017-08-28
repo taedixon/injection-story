@@ -167,8 +167,8 @@ void _drawStage_legacy(int camX, int camY, BOOLEAN front) {
 	//sanity check
 	if (!*CS_mapTiles) 
 		return;
-	int startX = (camX / 512 + 8) / TILE_SIZE;
-	int startY = (camY / 512 + 8) / TILE_SIZE;
+	int startX = (camX / CS_SUBPX + 8) / TILE_SIZE;
+	int startY = (camY / CS_SUBPX + 8) / TILE_SIZE;
 	RECT tileRect;
 	for (int y = startY; y < startY + VIEW_TILE_H; y++) {
 		for (int x = startX; x < startX + VIEW_TILE_W; x++) {
@@ -183,8 +183,9 @@ void _drawStage_legacy(int camX, int camY, BOOLEAN front) {
 			tileRect.top = TILE_SIZE * (tileNum / TILESET_W);
 			tileRect.right = tileRect.left + TILE_SIZE;
 			tileRect.bottom = tileRect.top + TILE_SIZE;
-			int screenX = TILE_SIZE * x - 8 - (camX / 512);
-			int screenY = TILE_SIZE * y - 8 - (camY / 512);
+			int screenX = (TILE_SIZE * x - 8) * CS_SUBPX;
+			int screenY = (TILE_SIZE * y - 8) * CS_SUBPX;
+			toScreenSpace(&screenX, &screenY, camX, camY);
 			CS_putBitmap3(CS_fullScreenRect, screenX, screenY, &tileRect, CS_BM_TILESET);
 			//NOTE - THIS FUNC DOES NOT DRAW STAR BLOCKS
 		}
@@ -227,8 +228,9 @@ void _drawStage(int camX, int camY, unsigned int layer) {
 			tileRect.top += tframe * TILE_SIZE;
 			tileRect.bottom += tframe * TILE_SIZE;
 
-			int screenX = TILE_SIZE * x - 8 - (camX / 512);
-			int screenY = TILE_SIZE * y - 8 - (camY / 512);
+			int screenX = (TILE_SIZE * x - 8) * CS_SUBPX;
+			int screenY = (TILE_SIZE * y - 8) * CS_SUBPX;
+			toScreenSpace(&screenX, &screenY, camX, camY);
 			CS_putBitmap3(CS_fullScreenRect, screenX, screenY, &tileRect, CS_BM_TILESET);
 
 			/*

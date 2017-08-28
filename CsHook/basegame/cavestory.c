@@ -117,6 +117,7 @@ int(*CS_escMenuLoop)(HWND window) = (int(*)(HWND))0x40DD70;
 void(*CS_setMapName)(char* name) = (void(*)(char*))0x4140F0;
 void(*CS_runEvent)(int eve) = (void(*)(int))0x421990;
 int(*CS_atoi)(int scriptOffset) = (int(*)(int))0x421900;
+int(*CS_checkFlag)(int flagID) = (int(*)(int))0x40E930;
 
 void(*CS_createBullet)(int id, int x, int y, int direction) = (void(*)(int, int, int, int))0x403F80;
 void(*CS_createNPC)(int, int, int, int, int, int, int, int)

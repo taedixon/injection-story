@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "npc.h"
 #include "util.h"
+#include "player.h"
 
 int isHitPlayer(CS_ENTITY* ent) {
 	RECT playerHitbox = {
@@ -94,7 +95,7 @@ void NPC_potShard(CS_ENTITY* self) {
 
 	//hit floor, bounce back up
 	if (self->collision & 8) {
-		self->yVel = -self->alt_yVel /2;
+		self->yVel = -self->alt_yVel / 2;
 		self->xVel /= 2;
 		if (self->directive) {
 			self->directive--;
@@ -140,5 +141,22 @@ void NPC_potShard(CS_ENTITY* self) {
 	} else {
 		self->frameRect.right = self->frameRect.left + 8;
 		self->frameRect.bottom = self->frameRect.top + 8;
+	}
+}
+
+void NPC_digSpot(CS_ENTITY* self) {
+	if (!self->scriptState) {
+		if (playerSpecialState == SSTATE_DIG_TRIGGER) {
+			if (isHitPlayer(self)) {
+				self->scriptState = 1;
+				self->scriptTimer = 20;
+				CS_runEvent(self->eventNum);
+			}
+		}
+	} else {
+		self->scriptTimer--;
+		if (!self->scriptTimer) {
+			self->scriptState = 0;
+		}
 	}
 }

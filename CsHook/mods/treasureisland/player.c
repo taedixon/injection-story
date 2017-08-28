@@ -82,7 +82,13 @@ void control_topdown(char canControl) {
 // gives us a chance to set special state in some conditions to 
 // transition to a different control mode.
 void _control_regular_postop() {
-
+	if ((*CS_keyPressed & *CS_keyMap) && (*CS_playerTileFlags & 0x8)) {
+		//press the dig key while on ground
+		if (CS_checkFlag(99)) {
+			//flag 99 enables digging
+			setPlayerSpecialState(SSTATE_DIG);
+		}
+	}
 }
 
 // if playerSpecialState is set, this gets called instead of regular player
@@ -93,6 +99,9 @@ void _control_override() {
 		//fallthru
 	case SSTATE_SWING1:
 	case SSTATE_SWING2:
+		//same behaviour for digging
+	case SSTATE_DIG:
+	case SSTATE_DIG_TRIGGER:
 		*CS_playerXvel -= *CS_playerXvel / 10;
 		//move down to ensure we maintain tile contact
 		*CS_playerYvel = 0x201;
@@ -101,6 +110,7 @@ void _control_override() {
 			playerSpecialState = SSTATE_NONE;
 		}
 		break;
+
 	}
 
 	*CS_playerX += *CS_playerXvel;
@@ -120,8 +130,8 @@ void _drawPlayer_legacy(int camX, int camY) {
 	int wpnYOffset, wpnXOffset;
 	RECT playerRect = *CS_playerFrameRect;
 	RECT weaponRect;
-	int playerScreenX = (*CS_playerX - (*CS_playerSizeRect).left);
-	int playerScreenY = (*CS_playerY - (*CS_playerSizeRect).top);
+	int playerScreenX = (*CS_playerX - CS_playerSizeRect->left);
+	int playerScreenY = (*CS_playerY - CS_playerSizeRect->top);
 	toScreenSpace(&playerScreenX, &playerScreenY, camX, camY);
 
 	//calculate weapon framerects
@@ -279,9 +289,32 @@ void _calcFrame_attack(int* row, int* col) {
 	}
 }
 
+void _calcFrame_dig(int* row, int* col) {
+	const int N_DIG_FRAME = 4;
+	const int frameTiming[] = {
+		12, 8, 8, 12
+	};
+	playerSpecialState = SSTATE_DIG;
+	*row = 0;
+	*col = playerAnimState + 4;
+	if (++playerAnimTimer >= frameTiming[playerAnimState]) {
+		playerAnimTimer = 0;
+		++playerAnimState;
+		if (playerAnimState == 2) {
+			// on this frame we want to begin the hurtbox
+			CS_playSound(109, 1);
+			playerSpecialState = SSTATE_DIG_TRIGGER;
+		}
+		if (playerAnimState >= N_DIG_FRAME) {
+
+			setPlayerSpecialState(SSTATE_NONE);
+		}
+	}
+}
+
 
 void _playerCalcFrame(int canControl) {
-	const int frameW = 48;
+	const int frameW = 64;
 	const int frameH = 48;
 	const int directionOffset = 240;
 
@@ -289,7 +322,7 @@ void _playerCalcFrame(int canControl) {
 
 	CS_playerSizeRect->left = frameW * CS_SUBPX / 2;
 	CS_playerSizeRect->top = frameH * CS_SUBPX * 3 / 4;
-	CS_playerHitRect->top = frameW * CS_SUBPX / 2;
+	CS_playerHitRect->top = frameH * CS_SUBPX / 2;
 	CS_playerHitRect->bottom = frameH * CS_SUBPX / 4;
 	CS_playerHitRect->left = 4 * CS_SUBPX;
 	CS_playerHitRect->right = 4 * CS_SUBPX;
@@ -306,6 +339,9 @@ void _playerCalcFrame(int canControl) {
 		case SSTATE_SWING:
 			_calcFrame_attack(&frameRow, &frameCol);
 			break;
+		case SSTATE_DIG:
+		case SSTATE_DIG_TRIGGER:
+			_calcFrame_dig(&frameRow, &frameCol);
 		}
 	} else {
 		_calcFrame_air(&frameRow, &frameCol);
@@ -327,8 +363,8 @@ void _playerCalcFrame_boat(int canControl) {
 	const int frameW = 16;
 	const int frameH = 16;
 	enum DIRECTION dir = getDirection(*CS_playerXvel, *CS_playerYvel);
-	CS_playerFrameRect->left = dir * 0x10 + 416;
-	CS_playerFrameRect->top = 0;
+	CS_playerFrameRect->left = dir * 0x10;
+	CS_playerFrameRect->top = 192;
 	CS_playerFrameRect->right = CS_playerFrameRect->left + 0x10;
 	CS_playerFrameRect->bottom = CS_playerFrameRect->top + 0x10;
 	//set boat hitbox
