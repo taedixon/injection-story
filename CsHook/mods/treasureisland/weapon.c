@@ -56,6 +56,7 @@ void(*bulletFuncs[])(CS_BULLET*) = {
 };
 
 void drawBullet_debug(CS_BULLET* self, int camX, int camY) {
+	return;
 	RECT fr;
 	int hitboxCol = 0xFF2222;
 	fr.left = ((-self->hitRect.left + self->xPos) & -CS_SUBPX) - camX;

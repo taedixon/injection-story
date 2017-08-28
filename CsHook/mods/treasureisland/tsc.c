@@ -20,6 +20,7 @@ int tscHook() {
 		*CS_currentFacepic = 0;
 		*CS_playerStateFlags &= -2;
 		return 1;
+
 	} else if (currentCommand == *(int*)"<NAM") {
 		int count;
 		*CS_scriptOffset += 4;
@@ -34,6 +35,7 @@ int tscHook() {
 			CS_setMapName(strBuf);
 		}
 		return 0;
+
 	} else if (currentCommand == *(int*)"<$$+") {
 
 		scriptPointer += 4;
@@ -51,6 +53,7 @@ int tscHook() {
 		*CS_scriptOffset += 12;
 
 		return 0;
+
 	} else if (currentCommand == *(int*)"<CMP") {
 		//custom CMP, specifying which layer to set the tile to
 		//<CMP xTile : yTile : target : layer
@@ -66,6 +69,11 @@ int tscHook() {
 		setTile(argVal, arg2, arg4, arg3);
 
 		*CS_scriptOffset += 4;
+		return 0;
+
+	} else if (currentCommand == *(int*)"<FM2") {
+		*CS_scriptOffset += 4;
+		*CS_fadeOrganya = 0;
 		return 0;
 	}
 

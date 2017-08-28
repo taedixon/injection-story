@@ -37,7 +37,7 @@ typedef struct Entity {
 	int scriptTimer;
 	RECT hitRect;
 	RECT displayRect;
-	int hitTrue;
+	int damageNumberTimer;
 	int damageTaken;
 	int damage;
 	struct Entity* parent;
@@ -159,6 +159,8 @@ extern int* CS_expToGain;
 //sound
 extern int* CS_soundPointers;
 extern unsigned short* CS_orgTempo;
+extern int* CS_orgVolume;
+extern int* CS_fadeOrganya;
 //system
 extern HWND* CS_appWinHandle;
 extern char* CS_dataDirPath;

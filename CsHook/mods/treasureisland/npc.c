@@ -160,3 +160,56 @@ void NPC_digSpot(CS_ENTITY* self) {
 		}
 	}
 }
+
+//default: U/D trigger (extends infinitely horizontal)
+//alt direction: L/R trigger (extends infinitely vertical)
+//state 1: player is left/above trigger
+//state 2: player is right/under trigger
+void NPC_boundsTrigger(CS_ENTITY* self) {
+	int location;
+	int target;
+
+	// init the NPC to set default triggered state to be 
+	// whichever side the player is already on
+	if (self->scriptState == 0) {
+		if (self->direction) {
+			self->scriptState = (*CS_playerX < self->xPos) ? 1 : 2;
+		} else {
+			self->scriptState = (*CS_playerY < self->yPos) ? 1 : 2;
+		}
+	}
+	//set bit 0
+	int state = (self->scriptState - 1);
+	//set bit 1
+	state |= (self->direction == 0) ? 0 : 2;
+
+	switch (state) {
+	default:
+	case 0:
+		// U/D trigger, player above
+		location = *CS_playerY;
+		target = self->yPos + self->hitRect.bottom;
+		break;
+	case 1:
+		// U/D trigger, player below
+		location = self->yPos - self->hitRect.top;
+		target = *CS_playerY;
+		break;
+	case 2:
+		// L/R trigger, player left
+		location = *CS_playerX;
+		target = self->xPos + self->hitRect.right;
+		break;
+	case 3:
+		// L/R trigger, player right;
+		location = self->xPos - self->hitRect.left;
+		target = *CS_playerX;
+		break;
+	}
+
+	if (location > target) {
+		//run event
+		CS_runEvent(self->eventNum + self->scriptState - 1);
+		self->scriptState = self->scriptState == 1 ? 2 : 1;
+	}
+}

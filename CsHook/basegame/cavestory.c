@@ -94,8 +94,10 @@ int* CS_keyDown = (int*)0x49363C;
 int* CS_treasureActual = (int*)0x49E370;
 int* CS_treasureShown = (int*)0x49E374;
 
-
+//music
 unsigned short* CS_orgTempo = (unsigned short*)0x4A4E18;
+int* CS_orgVolume = (int*)0x4937A4;
+int* CS_fadeOrganya = (int*)0x4A4E10;
 
 // 0x498548 NPC function pointer table
 void(**CS_npcFuncTable)(CS_ENTITY*) = (void(**)(CS_ENTITY*))0x498548;

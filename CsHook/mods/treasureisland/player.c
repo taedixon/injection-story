@@ -53,7 +53,7 @@ void control_topdown(char canControl) {
 		if (held & *CS_keyDown) {
 			*CS_playerYvel += speed;
 		}
-		if (pressed & *CS_keyShoot) {
+		if (pressed & (*CS_keyShoot | *CS_keyJump)) {
 			*CS_playerStateFlags |= 1;
 		}
 	}

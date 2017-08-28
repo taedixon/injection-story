@@ -38,6 +38,7 @@ void hook_treasureisland() {
 	CS_npcFuncTable[19] = &NPC_touchTrigger;
 	CS_npcFuncTable[22] = &NPC_digSpot;
 	CS_npcFuncTable[29] = &NPC_boat;
+	CS_npcFuncTable[43] = &NPC_boundsTrigger;
 	CS_npcFuncTable[78] = &NPC_pot;
 	CS_npcFuncTable[79] = &NPC_potShard;
 
