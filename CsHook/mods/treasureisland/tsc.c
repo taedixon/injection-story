@@ -54,9 +54,9 @@ int tscHook() {
 
 		return 0;
 
-	} else if (currentCommand == *(int*)"<CMP") {
+	} else if (currentCommand == *(int*)"<CML") {
 		//custom CMP, specifying which layer to set the tile to
-		//<CMP xTile : yTile : target : layer
+		//<CMP  layer : xTile : yTile : target
 		*CS_scriptOffset += 4;
 		argVal = CS_atoi(*CS_scriptOffset);
 		*CS_scriptOffset += 5;
@@ -66,7 +66,9 @@ int tscHook() {
 		*CS_scriptOffset += 5;
 		arg4 = CS_atoi(*CS_scriptOffset);
 
-		setTile(argVal, arg2, arg4, arg3);
+		setTile(arg2, arg3, argVal, arg4);
+		//make a smoke
+		CS_createNPC(4, arg2 * 16 * CS_SUBPX, arg3 * 16 * CS_SUBPX, 0, 0, 0, 0, 0x100);
 
 		*CS_scriptOffset += 4;
 		return 0;

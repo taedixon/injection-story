@@ -15,8 +15,8 @@ typedef struct Entity {
 	int yVel;		//+0x14
 	int alt_xVel;	//+0x18
 	int alt_yVel;	//+0x1C
-	int target_x;	//+0x20
-	int target_y;	//+0x24
+	int targetX;	//+0x20
+	int targetY;	//+0x24
 	int npcID;		//+0x28
 	int entityID;	//+0x2C
 	int eventNum;	//+0x30
@@ -119,6 +119,7 @@ extern int* CS_lastUsedNumSlot;
 extern CS_NUM_OBJ* CS_numbers;
 //map
 extern CS_MAPDATA* CS_mapdata;
+extern CS_BULLET* CS_bullets;
 
 extern char* CS_flagdata;
 extern int* CS_oldmapdata;
@@ -136,7 +137,7 @@ extern int* CS_playerFacingUp;
 extern int* CS_playerFacingDown;
 extern int* CS_playerFrameNum;
 extern int* CS_playerEquipFlags;
-extern int* CS_playerStateFlags;
+extern char* CS_playerStateFlags;
 extern int* CS_playerTileFlags;
 extern int* CS_playerX;
 extern int* CS_playerY;
@@ -218,10 +219,16 @@ extern int(*CS_atoi)(int scriptOffset);
 extern int(*CS_doesProfileExist)();
 extern void(*CS_createNumberObject)(int* targetX, int* targetY, int amt);
 extern int(*CS_checkFlag)(int flagID);
+extern int(*CS_checkItem)(int itemID);
 
 extern void(*CS_createBullet)(int id, int x, int y, int direction);
-extern void(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, int unk, int slot);
+extern CS_ENTITY*(*CS_createNPC)(int id, int x, int y, int xVel, int yVel, int direction, CS_ENTITY* parent, int slot);
 extern void(*CS_createEffect)(int x, int y, int id, int mode);
+extern void(*CS_deleteAllNpc)(int, int);
+
+extern int(*CS_getSin)(char);
+extern int(*CS_getCos)(char);
+extern int(*CS_getArktan)(int, int);
 
 extern void(*CS_playerAgility)(int);
 extern int(*CS_playerHitSquareBlock)();
@@ -249,6 +256,7 @@ extern void(*CS_killNpc)(CS_ENTITY* npc, int shouldVanish);
 #define CS_BM_ARMS 11
 #define CS_BM_MNA 13
 #define CS_BM_PLAYER 16
+#define CS_BM_BULLET 17
 #define CS_BM_SYM 20
 #define CS_BM_TEXTBOX 26
 #define CS_BM_NUMBERBUF 29

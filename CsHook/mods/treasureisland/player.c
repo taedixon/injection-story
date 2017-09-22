@@ -81,12 +81,14 @@ void control_topdown(char canControl) {
 // do some stuff without needing to rewrite it entirely.
 // gives us a chance to set special state in some conditions to 
 // transition to a different control mode.
-void _control_regular_postop() {
-	if ((*CS_keyPressed & *CS_keyMap) && (*CS_playerTileFlags & 0x8)) {
-		//press the dig key while on ground
-		if (CS_checkFlag(99)) {
-			//flag 99 enables digging
-			setPlayerSpecialState(SSTATE_DIG);
+void _control_regular_postop(int canControl) {
+	if (canControl) {
+		if ((*CS_keyPressed & *CS_keyMap) && (*CS_playerTileFlags & 0x8)) {
+			//press the dig key while on ground
+			if (CS_checkFlag(99)) {
+				//flag 99 enables digging
+				setPlayerSpecialState(SSTATE_DIG);
+			}
 		}
 	}
 }
@@ -99,6 +101,8 @@ void _control_override() {
 		//fallthru
 	case SSTATE_SWING1:
 	case SSTATE_SWING2:
+	case SSTATE_SWING_ENDLAG1:
+	case SSTATE_SWING_ENDLAG2:
 		//same behaviour for digging
 	case SSTATE_DIG:
 	case SSTATE_DIG_TRIGGER:
@@ -259,17 +263,18 @@ void _calcFrame_air(int* row, int* col) {
 void _calcFrame_attack(int* row, int* col) {
 	const int N_SWING_FRAME = 6;
 	const int frameTiming[] = {
-		10, 8, 4, 4, 8, 8
+		8, 5, 4, 4, 7, 7
 	};
 	if (playerSpecialState == SSTATE_SWING) {
-		if (prevSpecialState == SSTATE_SWING1) {
+		if (prevSpecialState == SSTATE_SWING_ENDLAG1) {
 			playerSpecialState = SSTATE_SWING2;
 		} else {
 			playerSpecialState = SSTATE_SWING1;
 		}
 	}
 
-	if (playerSpecialState == SSTATE_SWING1) {
+	if (playerSpecialState == SSTATE_SWING1 
+		|| playerSpecialState == SSTATE_SWING_ENDLAG1) {
 		*row = 2;
 	} else {
 		*row = 3;
@@ -281,6 +286,7 @@ void _calcFrame_attack(int* row, int* col) {
 		if (playerAnimState == 3) {
 			// on this frame we want to begin the hurtbox
 			shovel_do_attack();
+			playerSpecialState = (playerSpecialState == SSTATE_SWING1) ? SSTATE_SWING_ENDLAG1 : SSTATE_SWING_ENDLAG2;
 		}
 		if (playerAnimState >= N_SWING_FRAME) {
 
@@ -337,6 +343,8 @@ void _playerCalcFrame(int canControl) {
 		case SSTATE_SWING1:
 		case SSTATE_SWING2:
 		case SSTATE_SWING:
+		case SSTATE_SWING_ENDLAG1:
+		case SSTATE_SWING_ENDLAG2:
 			_calcFrame_attack(&frameRow, &frameCol);
 			break;
 		case SSTATE_DIG:
@@ -368,8 +376,8 @@ void _playerCalcFrame_boat(int canControl) {
 	CS_playerFrameRect->right = CS_playerFrameRect->left + 0x10;
 	CS_playerFrameRect->bottom = CS_playerFrameRect->top + 0x10;
 	//set boat hitbox
-	CS_playerHitRect->top = frameW * CS_SUBPX / 2;
-	CS_playerHitRect->bottom = frameH * CS_SUBPX / 4;
+	CS_playerHitRect->top = frameH * CS_SUBPX / 4;
+	CS_playerHitRect->bottom = frameH * CS_SUBPX / 3;
 	CS_playerHitRect->left = 4 * CS_SUBPX;
 	CS_playerHitRect->right = 4 * CS_SUBPX;
 	CS_playerSizeRect->left = frameW * CS_SUBPX / 2;
@@ -558,6 +566,8 @@ void drawPlayerArms(char canControl) {
 		int diff = *treasureActual - treasure;
 		if (diff > 30) {
 			treasure += diff / 30;
+		} else if (diff < 0) {
+			treasure = *treasureActual;
 		} else {
 			if (diff > 0) {
 				treasure++;
@@ -616,7 +626,7 @@ void playerAct(int canControl) {
 			} else {
 				//default, CS controls
 				CS_playerAgility(canControl);
-				_control_regular_postop();
+				_control_regular_postop(canControl);
 			}
 			break;
 		case 1:
@@ -624,10 +634,11 @@ void playerAct(int canControl) {
 			break;
 		}
 	}
+	*CS_playerStateFlags &= -0x21;
 }
 
 void getCoin(int coinAmt) {
-	int amtGained = coinAmt * CS_randInt(20, 50);
+	int amtGained = CS_randInt(8*coinAmt, 12*coinAmt);
 
 	*treasureActual += amtGained;
 	*CS_expToGain += amtGained;

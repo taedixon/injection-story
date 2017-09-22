@@ -287,9 +287,10 @@ void drawStageFront(int cameraX, int cameraY) {
 }
 
 int hitTile_oneway(int x, int y) {
-	if (!(PrevTileFlags & 0x38) && (*CS_keyHeld & *CS_keyDown)) {
+	if (!(PrevTileFlags & 0x38) && (*CS_keyHeld & *CS_keyDown) && !(*CS_playerStateFlags & 2)) {
 		// don't collide with this tile if the player was 
 		// airborne in the previous frame and is holding down
+		//and can control their player
 		return 0;
 	}
 	if (*CS_playerYvel > 0) {

@@ -12,6 +12,7 @@ char* CS_flagdata = (char*)0x49DDA0;
 
 int* CS_lastUsedNumSlot = (int*)0x4A5F90;
 CS_NUM_OBJ* CS_numbers = (CS_NUM_OBJ*)0x4A5F98;
+CS_BULLET* CS_bullets = (CS_BULLET*)0x499C98;
 
 //map
 int* CS_bgMode = (int*)0x499C88;
@@ -29,7 +30,7 @@ int* CS_playerFacingUp = (int*)0x49E644;
 int* CS_playerFacingDown = (int*)0x49E648;
 int* CS_playerFrameNum = (int*)0x49E678;
 int* CS_playerEquipFlags = (int*)0x49E650;
-int* CS_playerStateFlags = (int*)0x49E638;
+char* CS_playerStateFlags = (char*)0x49E638;
 int* CS_playerTileFlags = (int*)0x49E63C;
 int* CS_playerX = (int*)0x49E654;
 int* CS_playerY = (int*)0x49E658;
@@ -120,13 +121,20 @@ void(*CS_setMapName)(char* name) = (void(*)(char*))0x4140F0;
 void(*CS_runEvent)(int eve) = (void(*)(int))0x421990;
 int(*CS_atoi)(int scriptOffset) = (int(*)(int))0x421900;
 int(*CS_checkFlag)(int flagID) = (int(*)(int))0x40E930;
+int(*CS_checkItem)(int itemID) = (int(*)(int))0x401F20;
+
+
+int(*CS_getSin)(char) = (int(*)(char))0x4258B0;
+int(*CS_getCos)(char) = (int(*)(char))0x4258C0;
+int(*CS_getArktan)(int, int) = (int(*)(int, int))0x4258E0;
 
 void(*CS_createBullet)(int id, int x, int y, int direction) = (void(*)(int, int, int, int))0x403F80;
-void(*CS_createNPC)(int, int, int, int, int, int, int, int)
-					= (void(*)(int, int, int, int, int, int, int, int))0x46EFD0;
+CS_ENTITY* (*CS_createNPC)(int, int, int, int, int, int, CS_ENTITY*, int)
+= (CS_ENTITY*(*)(int, int, int, int, int, int, CS_ENTITY*, int))0x46EFD0;
 void(*CS_createEffect)(int, int, int, int) = (void(*)(int, int, int, int))0x40AC90;
 int(*CS_doesProfileExist)() = (int(*)())0x41CFC0;
 void(*CS_createNumberObject)(int*, int*, int) = (void(*)(int*, int*, int))0x425BF0;
+void(*CS_deleteAllNpc)(int, int) = (int(*)(int, int))0x4702D0;
 
 
 void(*CS_playerAgility)(int) = (void(*)(int))0x4156C0;
