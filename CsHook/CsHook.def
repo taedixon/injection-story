@@ -1,8 +1,3 @@
-LIBRARY version
+LIBRARY cshook
 EXPORTS
-	GetFileVersionInfoA
-	GetFileVersionInfoW
-	GetFileVersionInfoSizeA
-	GetFileVersionInfoSizeW
-	VerQueryValueA
-	VerQueryValueW
+	HookMod
