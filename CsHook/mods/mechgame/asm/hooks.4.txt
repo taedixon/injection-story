@@ -1,0 +1,5 @@
+offset 413C60
+; hook drawing foreground map tiles
+; mapdata+3
+JMP [4937BC];
+

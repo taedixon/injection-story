@@ -1,0 +1,21 @@
+offset 48B900
+; Load cshook.dll and call HookMod()
+
+push ebp
+mov ebp, esp
+mov eax, :STR_LIBNAME
+push eax
+call [48C0AC]
+mov ecx, :STR_FUNCNAME
+push ecx
+push eax
+call [48C134]
+call eax
+pop ebp
+retn
+
+:STR_LIBNAME
+data 63 73 68 6f 6f 6b 2e 64 6c 6c 00 ; cshook.dll
+:STR_FUNCNAME
+data 48 6f 6f 6b 4d 6f 64 00 ; HookMod
+

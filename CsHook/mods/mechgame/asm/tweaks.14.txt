@@ -1,0 +1,4 @@
+offset 42245C
+; fix yes/no box width
+mov [ebp-50], 0EC
+

@@ -1,0 +1,5 @@
+offset 415250
+; hook player draw
+; mapdata +6
+JMP [4937C8]
+

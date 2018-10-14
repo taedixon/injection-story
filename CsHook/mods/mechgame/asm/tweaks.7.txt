@@ -1,0 +1,5 @@
+offset 4115D0
+; allow NPC slot 2 to be twice as large
+push 1E0
+push 280
+

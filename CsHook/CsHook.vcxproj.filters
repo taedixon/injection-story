@@ -36,34 +36,34 @@
     <ClInclude Include="CsHook.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\hooks.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="basegame\cavestory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\map.h">
+    <ClInclude Include="mods\mechgame\map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\player.h">
+    <ClInclude Include="mods\mechgame\hooks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\util.h">
+    <ClInclude Include="mods\mechgame\player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\title.h">
+    <ClInclude Include="mods\mechgame\util.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\weapon.h">
+    <ClInclude Include="mods\mechgame\npc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\tsc.h">
+    <ClInclude Include="mods\mechgame\tsc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\npc.h">
+    <ClInclude Include="mods\mechgame\weapon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mods\treasureisland\boss.h">
+    <ClInclude Include="mods\mechgame\title.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mods\mechgame\mech.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,31 +80,31 @@
     <ClCompile Include="basegame\cavestory.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\hooks.c">
+    <ClCompile Include="mods\mechgame\hooks.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\map.c">
+    <ClCompile Include="mods\mechgame\map.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\player.c">
+    <ClCompile Include="mods\mechgame\player.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\util.c">
+    <ClCompile Include="mods\mechgame\util.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\title.c">
+    <ClCompile Include="mods\mechgame\npc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\weapon.c">
+    <ClCompile Include="mods\mechgame\tsc.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\tsc.c">
+    <ClCompile Include="mods\mechgame\weapon.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\npc.c">
+    <ClCompile Include="mods\mechgame\title.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\boss.c">
+    <ClCompile Include="mods\mechgame\mech.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

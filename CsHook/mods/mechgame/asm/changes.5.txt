@@ -1,0 +1,12 @@
+offset 412445
+; inject call to LoadLibrary
+cmp eax, 0
+je :gotMutex
+push eax 
+call [48C0D8]
+add esp, 4
+xor eax, eax
+jmp 412B83
+:gotMutex
+call 48B900
+jmp 412467

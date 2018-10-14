@@ -1,0 +1,5 @@
+offset 413930
+; hook freeing map tiles
+; mapdata+1
+JMP [4937B4]
+

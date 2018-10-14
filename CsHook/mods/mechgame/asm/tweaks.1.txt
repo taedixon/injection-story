@@ -1,0 +1,5 @@
+
+offset 40248D
+; lock scroll type 1 on y axis
+xor edx, edx
+

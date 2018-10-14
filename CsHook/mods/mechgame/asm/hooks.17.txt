@@ -1,0 +1,5 @@
+offset 41A1D0
+; hook draw HP
+; mapdata +15
+JMP [4937EC]
+

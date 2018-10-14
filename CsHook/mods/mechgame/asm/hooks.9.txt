@@ -1,0 +1,29 @@
+offset 40F9B0
+; hook the title screen
+; this is a bit tricky bc the title screen is
+; where the DLL itself actually gets called for the first time.
+; so, we do some regular asm stuff to make sure that gets done.
+; mapdata +8
+push ebp
+mov ebp, esp
+sub esp, 10
+call 409650 ; wipe effects
+call 420FA0 ; wipe tsc
+call 416D40 ; clear stream sound
+lea eax, [ebp-4]
+push eax
+sub eax, 4
+push eax
+sub eax, 4
+push eax
+sub eax, 4
+push eax
+call 410990 ; get version number
+add esp, 10
+push [ebp+8]
+call [4937D0] ; call hook
+add esp, 4
+mov esp, ebp
+pop ebp
+retn
+

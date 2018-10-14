@@ -1,0 +1,6 @@
+offset 4106F5
+; don't call fade in the normal spot
+fnop
+nop
+fnop
+

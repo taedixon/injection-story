@@ -1,0 +1,4 @@
+offset 41A0B0
+; skip drawing weapon icons honestly it can go in the other method
+RETN;
+

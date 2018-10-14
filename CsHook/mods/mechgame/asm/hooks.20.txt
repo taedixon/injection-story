@@ -1,0 +1,6 @@
+offset 4168C0
+; hook player act negotiator
+; mapdata +18
+JMP [4937F8]
+
+

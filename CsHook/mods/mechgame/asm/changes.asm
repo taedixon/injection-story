@@ -21,46 +21,6 @@ call 40E770 ; put fade
 pop ebx
 jmp 41085B
 
-
-offset 429BF6
-; change treasure chest (closed) sprite rects
-mov [ebp-30], 80
-mov [ebp-2C], 98
-mov [ebp-28], 0B0
-mov [ebp-24], 0B0
-
-mov [ebp-20], 0B0
-mov [ebp-1C], 98
-mov [ebp-18], 0E0
-mov [ebp-14], 0B0
-
-mov [ebp-10], 0E0
-mov [ebp-0C], 98
-mov [ebp-08], 110
-mov [ebp-04], 0B0
-
-offset 42A974
-; change treasure chest (open) sprite
-mov [ebp-10], 70
-mov [ebp-0C], 0E0
-mov [ebp-08], 0A0
-mov [ebp-04], 0F0
-
-
-offset 416408
-; add a vertical offset to the camera position
-mov ecx, 49E654
-mov eax, [ecx]
-add eax, [ecx+10]
-mov [ecx+8], eax
-mov eax, [ecx+4]
-add eax, [ecx+14]
-sub eax, 7000 ; camera focus offset
-mov [ecx+0C], eax
-mov eax, 0 ; padding
-nop
-nop
-
 offset 41C2B9
 ; allow organya to fade in as well as out
 

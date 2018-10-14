@@ -1,0 +1,10 @@
+offset 4225ED
+; hook the TSC parser
+; this destroys the END command which is handled in the new parser
+; mapdata +16
+CALL [4937F0]
+cmp eax, -1
+jle 422666
+mov [ebp-2C], eax
+jmp 4252A7
+

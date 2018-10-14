@@ -1,0 +1,4 @@
+offset 40F690
+; boot to title screen
+mov dword [EBP-4], 2
+

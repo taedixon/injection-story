@@ -1,0 +1,4 @@
+offset 498298
+; make textbox bitmaps a bit wider
+data F0
+

@@ -66,6 +66,9 @@
       <AdditionalDependencies>
       </AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>cp -v ../Debug/cshook.dll "C:\Users\Taeler\Desktop\mech_story\cshook.dll"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -102,15 +105,15 @@
   <ItemGroup>
     <ClInclude Include="basegame\cavestory.h" />
     <ClInclude Include="CsHook.h" />
-    <ClInclude Include="mods\treasureisland\boss.h" />
-    <ClInclude Include="mods\treasureisland\hooks.h" />
-    <ClInclude Include="mods\treasureisland\map.h" />
-    <ClInclude Include="mods\treasureisland\npc.h" />
-    <ClInclude Include="mods\treasureisland\player.h" />
-    <ClInclude Include="mods\treasureisland\title.h" />
-    <ClInclude Include="mods\treasureisland\tsc.h" />
-    <ClInclude Include="mods\treasureisland\util.h" />
-    <ClInclude Include="mods\treasureisland\weapon.h" />
+    <ClInclude Include="mods\mechgame\hooks.h" />
+    <ClInclude Include="mods\mechgame\map.h" />
+    <ClInclude Include="mods\mechgame\mech.h" />
+    <ClInclude Include="mods\mechgame\npc.h" />
+    <ClInclude Include="mods\mechgame\player.h" />
+    <ClInclude Include="mods\mechgame\title.h" />
+    <ClInclude Include="mods\mechgame\tsc.h" />
+    <ClInclude Include="mods\mechgame\util.h" />
+    <ClInclude Include="mods\mechgame\weapon.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -125,15 +128,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="mods\treasureisland\boss.c" />
-    <ClCompile Include="mods\treasureisland\npc.c" />
-    <ClCompile Include="mods\treasureisland\title.c" />
-    <ClCompile Include="mods\treasureisland\hooks.c" />
-    <ClCompile Include="mods\treasureisland\map.c" />
-    <ClCompile Include="mods\treasureisland\player.c" />
-    <ClCompile Include="mods\treasureisland\tsc.c" />
-    <ClCompile Include="mods\treasureisland\util.c" />
-    <ClCompile Include="mods\treasureisland\weapon.c" />
+    <ClCompile Include="mods\mechgame\hooks.c" />
+    <ClCompile Include="mods\mechgame\map.c" />
+    <ClCompile Include="mods\mechgame\mech.c" />
+    <ClCompile Include="mods\mechgame\npc.c" />
+    <ClCompile Include="mods\mechgame\player.c" />
+    <ClCompile Include="mods\mechgame\title.c" />
+    <ClCompile Include="mods\mechgame\tsc.c" />
+    <ClCompile Include="mods\mechgame\util.c" />
+    <ClCompile Include="mods\mechgame\weapon.c" />
     <ClCompile Include="stdafx.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

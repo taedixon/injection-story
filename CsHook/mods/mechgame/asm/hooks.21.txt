@@ -1,0 +1,5 @@
+offset 425BF0
+; hook "createNumberObject" func
+; mapdata +20
+JMP [493800]
+

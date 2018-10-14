@@ -1,0 +1,5 @@
+offset 4107A2
+; esc to title screen
+mov eax, 2
+
+

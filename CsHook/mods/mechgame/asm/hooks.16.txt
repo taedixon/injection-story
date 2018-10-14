@@ -1,0 +1,5 @@
+offset 419D10
+; hook draw weapon/ammo
+; mapdata +14
+JMP [4937E8]
+

@@ -1,0 +1,5 @@
+offset 4138A0
+; hook load PXA
+; mapdata +12
+JMP [4937E0]
+

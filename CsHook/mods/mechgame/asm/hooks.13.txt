@@ -1,0 +1,5 @@
+offset 41DBD0
+; hook snake weapon
+; mapdata +11
+JMP [4937DC]
+

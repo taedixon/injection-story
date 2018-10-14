@@ -1,0 +1,5 @@
+offset 421A0D
+; make textbox cliprect a bit wider
+mov [4A5B24], 120
+
+

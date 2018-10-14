@@ -1,0 +1,4 @@
+offset 403F69
+; fix switch table a bit
+data 2F 3E 40 00
+

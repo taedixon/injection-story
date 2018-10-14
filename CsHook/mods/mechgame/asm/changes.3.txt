@@ -1,0 +1,27 @@
+offset 415EE6
+; make BoosterV0.8 give bigger boosts, spawn a better FX
+mov dword [49E670], -480
+; create fx
+push 17F
+push 0
+push 0
+push 200
+push 0
+mov eax, [49E688]
+cdq
+sub eax, edx
+sar eax, 1
+add eax, [49E658]
+push eax
+mov edx, [49E654]
+push edx
+push 29
+call 46EFD0
+add esp, 10
+push 1
+push 1b
+call 420640
+add esp, 8
+jmp 415F33
+
+

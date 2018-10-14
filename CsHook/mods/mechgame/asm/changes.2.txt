@@ -1,0 +1,28 @@
+offset 41C2B9
+; allow organya to fade in as well as out
+
+#define
+orgvol=4937A4
+orgfade=4A4E10
+#enddefine
+
+mov ecx, orgvol
+cmp [orgfade], 0
+jnz :isFadeOut
+cmp [ecx], 5F
+jge :end
+add [ecx], 5
+jmp :end
+:isFadeOut
+cmp [ecx], 1
+jle :end
+sub [ecx], 2
+
+; padding
+and ecx, 12345678
+and ecx, 12345678
+fnop
+fnop
+fnop
+:end
+

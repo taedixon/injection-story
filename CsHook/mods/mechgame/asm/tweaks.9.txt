@@ -1,0 +1,4 @@
+offset 410508
+; esc to title screen
+mov eax, 2
+

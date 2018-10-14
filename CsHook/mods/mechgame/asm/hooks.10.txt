@@ -1,0 +1,30 @@
+offset 40902A
+; hook bullet functions
+; here we want to do something a bit different than vanilla cave story, and
+; use a table of function pointers (as entities do) rather than a big switch
+; statement for each type of bullet.
+; mapdata +9
+mov ecx, [ebp-8] ; bullet ID
+sub ecx, 1
+mov [ebp-8], ecx
+cmp ecx, 2C
+JA 4094F8
+
+; obtain the shot's level by taking shot.ID%3 + 1
+mov eax, ecx
+mov dl, 3
+idiv dl
+movzx eax, ah
+inc eax
+push eax
+
+mov eax, [ebp-4]
+shl eax, 7
+mov edx, [4937D4] ; hooked table
+add eax, 499C98
+push eax
+call [edx + ecx*4]
+add esp, 8
+
+jmp 4094F8
+

@@ -1,0 +1,6 @@
+offset 416103
+; let the player move a lot faster upwards
+cmp [49E670], -1000
+jge 416119
+mov [49E670], -1000
+

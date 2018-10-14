@@ -1,0 +1,4 @@
+offset 41D463
+mov word [49E6CC], ax
+nop
+

@@ -1,0 +1,5 @@
+offset 416470
+; hook UNI0001 movement
+; mapdata +4
+JMP [4937C0]
+

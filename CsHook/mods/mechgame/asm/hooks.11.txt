@@ -1,0 +1,23 @@
+offset 403DC0
+; hook draw bullet function
+; mapdata +10
+JMP [4937D8]
+
+
+; do the regular stuff
+mov edx, [ebp-10]
+cmp edx, 3
+ja 403EFF
+jmp [edx*4+403F69]
+
+mov eax, [ebp-0C]
+shl eax, 7
+add eax, 499C98
+mov edx, [eax+10]
+sub edx, [eax+70]
+mov [ebp-8], edx
+mov ecx, [eax+14]
+sub ecx, [eax+74]
+mov [ebp-4], ecx
+jmp 403EFF
+

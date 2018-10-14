@@ -1,0 +1,23 @@
+
+offset 410815
+; reordered calls to rendering HUD
+push ebx
+mov ebx, [49E1E8]
+and ebx, 2
+push ebx
+call 41A1D0 ; draw HP / ui background
+add esp, 4
+push 0
+call 414250 ; draw map name
+add esp, 4
+push ebx
+call 419D10 ; draw weapon stuff
+add esp, 4
+push 68
+push 78
+call 41A350 ; draw air
+add esp, 8
+call 40E770 ; put fade
+pop ebx
+jmp 41085B
+

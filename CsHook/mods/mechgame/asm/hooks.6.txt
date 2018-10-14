@@ -1,0 +1,5 @@
+offset 414BF0
+; hook player frame calc
+; mapdata +5
+JMP [4937C4]
+

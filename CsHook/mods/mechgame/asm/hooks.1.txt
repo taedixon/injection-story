@@ -1,0 +1,6 @@
+
+offset 413770
+; hook load map function
+; mapdata+0
+JMP [4937B0]
+

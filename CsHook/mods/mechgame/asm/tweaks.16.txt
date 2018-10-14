@@ -1,0 +1,4 @@
+offset 471B21
+; make fall-thru tiles solid for NPCs
+data 01
+

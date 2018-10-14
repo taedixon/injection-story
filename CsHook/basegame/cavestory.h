@@ -18,7 +18,7 @@ typedef struct Entity {
 	int targetX;	//+0x20
 	int targetY;	//+0x24
 	int npcID;		//+0x28
-	int entityID;	//+0x2C
+	int flagId;		//+0x2C
 	int eventNum;	//+0x30
 	int tilesetID;	//+0x34
 	int hurtSound;	//+0x38

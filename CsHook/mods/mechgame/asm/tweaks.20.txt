@@ -1,0 +1,5 @@
+offset 4219F2
+; make invuln timer not reset on events
+add ecx, 123456
+nop
+

@@ -1,0 +1,5 @@
+offset 417E40
+; hook player tile collision check
+; mapdata +7
+JMP [4937CC]
+

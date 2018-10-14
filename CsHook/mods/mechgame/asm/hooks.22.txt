@@ -1,0 +1,4 @@
+offset 418B10
+; hook "checkHitNpcNonSolid" function
+; mapdata +21
+JMP [493804]

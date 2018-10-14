@@ -1,0 +1,5 @@
+offset 4162EF
+; make spikes do 4 dommage
+push 04
+
+; recover all health on profile load

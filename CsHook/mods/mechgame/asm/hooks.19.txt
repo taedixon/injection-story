@@ -1,0 +1,5 @@
+offset 414250
+; hook rendering map name
+; mapdata 17
+JMP [4937F4]
+
