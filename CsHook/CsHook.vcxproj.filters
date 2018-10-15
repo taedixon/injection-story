@@ -66,6 +66,9 @@
     <ClInclude Include="mods\mechgame\mech.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="mods\mechgame\circuit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CsHook.c">
@@ -105,6 +108,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mods\mechgame\mech.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mods\mechgame\circuit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -105,6 +105,7 @@
   <ItemGroup>
     <ClInclude Include="basegame\cavestory.h" />
     <ClInclude Include="CsHook.h" />
+    <ClInclude Include="mods\mechgame\circuit.h" />
     <ClInclude Include="mods\mechgame\hooks.h" />
     <ClInclude Include="mods\mechgame\map.h" />
     <ClInclude Include="mods\mechgame\mech.h" />
@@ -128,6 +129,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="mods\mechgame\circuit.c" />
     <ClCompile Include="mods\mechgame\hooks.c" />
     <ClCompile Include="mods\mechgame\map.c" />
     <ClCompile Include="mods\mechgame\mech.c" />
