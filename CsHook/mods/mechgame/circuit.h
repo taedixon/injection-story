@@ -11,6 +11,7 @@
 #define CIRCUIT_TYPE_XOR 7
 #define CIRCUIT_TYPE_NOT 8
 #define CIRCUIT_TYPE_ONE_WAY 9
+#define CIRCUIT_TYPE_SINK 10
 
 typedef struct _Point {
 	unsigned short x;
@@ -21,15 +22,20 @@ typedef struct _CircuitWire {
 	struct _CircuitElement** inputs;
 	int inputsNext;
 	Point* wireLocations;
+	int wireLocNext;
+	Point* wireInputsPlaceholder;
+	int placeholderNext;
+	char powered;
+	char checkedThisCycle;
 } Wire;
 
 
 typedef struct _CircuitElement {
-	Wire* input1;
-	Wire* input2;
+	Wire* inputs[4];
 	int type;
 	char powered;
 	char isOpenSwitch;
+	char checkedThisCycle;
 	Point outputLoc;
 } CircuitElement;
 

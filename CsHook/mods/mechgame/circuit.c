@@ -9,99 +9,135 @@ CircuitElement Circuits[CIRCUIT_SIZE];
 int circuitLen = 0;
 int wireLen = 0;
 
+char isSwitchPowered(CircuitElement* self, Wire* fromWire);
+
 char isWirePowered(Wire* self) {
 	int i;
 	CircuitElement* input;
-	for (i = 0;; i++) {
-		input = self->inputs[i];
-		if (!input) {
-			break;
-		}
-		if (isPowered(input)) {
-			return 1;
+	if (!self->checkedThisCycle) {
+		self->checkedThisCycle = 1;
+		for (i = 0;; i++) {
+			input = self->inputs[i];
+			if (!input) {
+				break;
+			}
+			if (input->type == CIRCUIT_TYPE_SWITCH) {
+				self->powered |= isSwitchPowered(input, self);
+			} else {
+				self->powered |= isElementPowered(input);
+			}
 		}
 	}
-	return 0;
+	return self->powered;
 }
 
-char isPowered_switch(CircuitElement* self, Wire* fromWire) {
-	if (self->isOpenSwitch) {
-		return 0;
+char isSwitchPowered(CircuitElement* self, Wire* fromWire) {
+	if (!self->checkedThisCycle) {
+		self->checkedThisCycle = 1;
+		for (int i = 0; i < 4; i++) {
+			Wire* input = self->inputs[i];
+			if (input && input != fromWire) {
+				self->powered |= isWirePowered(input);
+			}
+		}
+		if (self->isOpenSwitch) {
+			self->powered = 0;
+		}
 	}
-	if (self->input1 == fromWire) {
-		return isPowered(self->input2);
-	} else {
-		return isPowered(self->input1);
-	}
+	return self->powered;
 }
 
 char isPowered_and(CircuitElement* self) {
-	return isWirePowered(self->input1) && isWirePowered(self->input2);
+	if (!self->checkedThisCycle) {
+		self->checkedThisCycle = 1;
+		self->powered = isWirePowered(self->inputs[0]) & isWirePowered(self->inputs[1]);
+	}
+	return self->powered;
+}
+
+char isPowered_nand(CircuitElement* self) {
+	if (!self->checkedThisCycle) {
+		self->checkedThisCycle = 1;
+		self->powered = !(isWirePowered(self->inputs[0]) & isWirePowered(self->inputs[1]));
+	}
+	return self->powered;
 }
 
 char isPowered_xor(CircuitElement* self) {
-	return isWirePowered(self->input1) ^ isWirePowered(self->input2);
+	if (!self->checkedThisCycle) {
+		self->checkedThisCycle = 1;
+		self->powered = isWirePowered(self->inputs[0]) ^ isWirePowered(self->inputs[1]);
+	}
+	return self->powered;
 }
 
+
 char isPowered_or(CircuitElement* self) {
-	return isWirePowered(self->input1) || isWirePowered(self->input2);
+	if (!self->checkedThisCycle) {
+		self->checkedThisCycle = 1;
+		for (int i = 0; i < 4; i++) {
+			if (self->inputs[i]) {
+				self->powered |= isWirePowered(self->inputs[i]);
+			}
+		}
+	}
+	return self->powered;
+}
+char isPowered_nor(CircuitElement* self) {
+	if (!self->checkedThisCycle) {
+		self->checkedThisCycle = 1;
+		self->powered = !(isWirePowered(self->inputs[0]) | isWirePowered(self->inputs[1]));
+	}
+	return self->powered;
 }
 
 char isElementPowered(CircuitElement* self) {
 	switch (self->type) {
 	case CIRCUIT_TYPE_POWER_SOURCE:
+		self->powered = 1;
 		return 1;
-	case CIRCUIT_TYPE_WIRE:
-		return isPowered_wire(self);
-	case CIRCUIT_TYPE_SWITCH:
-		return isPowered_switch(self);
 	case CIRCUIT_TYPE_ANDGATE:
 		return isPowered_and(self);
 	case CIRCUIT_TYPE_ORGATE:
 		return isPowered_or(self);
 	case CIRCUIT_TYPE_NANDGATE:
-		return !isPowered_and(self);
+		return isPowered_nand(self);
 	case CIRCUIT_TYPE_NORGATE:
-		return !isPowered_or(self);
+		return isPowered_nor(self);
 	case CIRCUIT_TYPE_XOR:
 		return isPowered_xor(self);
+	case CIRCUIT_TYPE_SINK:
+		return isPowered_or(self);
 	default:
 		return 0;
 	}
 }
 
-void initWire(Wire* self) {
-	self->inputs = malloc(sizeof(CircuitElement*) * 10);
-	self->inputsNext = 0;
-	self->wireLocations = malloc(sizeof(Point) * 100);
+setWireTiles(Wire* self) {
+	int target = getPxa(self->wireLocations[0].x, self->wireLocations[0].y);
+	if (target == 0x46 && !self->powered || target == 0x11 && self->powered) {
+		//assume the wires already ok
+		return;
+	}
+	for (int i = 0; i < self->wireLocNext; i++) {
+		Point p = self->wireLocations[i];
+		int type = getPxa(p.x, p.y);
+		int tile = getTile(p.x, p.y, getPhysicalLayer());
+		if (self->powered && type == 0x46) {
+			tile -= 0x10;
+		} else if (!self->powered && type == 0x11) {
+			tile += 0x10;
+		}
+		setTile(p.x, p.y, getPhysicalLayer(), tile);
+	}
 }
 
-void freeWire(Wire* self) {
-	if (self->inputs) {
-		free(self->inputs);
-		self->inputs = 0;
-	}
-	if (self->wireLocations) {
-		free(self->wireLocations);
-		self->wireLocations = 0;
-	}
-}
-
-void initElement(CircuitElement* self, int type, Point loc) {
-	self->type = type;
-	self->outputLoc = loc;
-	self->isOpenSwitch = 0;
-	self->powered = 0;
-}
-
-
-void resetCircuitNet() {
-	for (int i = 0; i < CIRCUIT_SIZE; i++) {
-		freeElement(&Circuits[i]);
-	}
-	memset(Circuits, 0, sizeof(CircuitElement)*CIRCUIT_SIZE);
-	memset(Wires, 0, sizeof(Wire)*MAX_WIRES);
-	circuitLen = 0;
+setSwitchTiles(CircuitElement* self) {
+	unsigned char possibleType[] = {
+		0x21, 0x40, 0x11, 0x10
+	};
+	int typeId = (self->powered << 1) | self->isOpenSwitch;
+	setTile(self->outputLoc.x, self->outputLoc.y, getPhysicalLayer(), possibleType[typeId]);
 }
 
 char pointInList(Point* list, int x, int y) {
@@ -114,6 +150,71 @@ char pointInList(Point* list, int x, int y) {
 	}
 }
 
+void initWire(Wire* self, Point loc) {
+	self->inputs = malloc(sizeof(CircuitElement*) * 10);
+	memset(self->inputs, 0, sizeof(CircuitElement*) * 10);
+	self->inputsNext = 0;
+	self->wireLocations = malloc(sizeof(Point) * 100);
+	memset(self->wireLocations, 0, sizeof(Point) * 100);
+	self->wireInputsPlaceholder = malloc(sizeof(Point) * 10);
+	memset(self->wireInputsPlaceholder, 0, sizeof(Point) * 10);
+	self->wireLocations[0] = loc;
+	self->wireLocNext = 1;
+}
+
+void freeWire(Wire* self) {
+	if (!self) return;
+	if (self->inputs) {
+		free(self->inputs);
+		self->inputs = 0;
+	}
+	if (self->wireLocations) {
+		free(self->wireLocations);
+		self->wireLocations = 0;
+	}
+	if (self->wireInputsPlaceholder) {
+		free(self->wireInputsPlaceholder);
+		self->wireInputsPlaceholder = 0;
+	}
+}
+
+void initElement(CircuitElement* self, int type, Point loc) {
+	self->type = type;
+	self->outputLoc = loc;
+	self->isOpenSwitch = 0;
+	self->powered = 0;
+	memset(self->inputs, 0, sizeof(Wire*) * 4);
+}
+
+CircuitElement* getElement(Point pos) {
+	for (int i = 0; i < circuitLen; i++) {
+		CircuitElement* element = &Circuits[i];
+		if (element->outputLoc.x == pos.x && element->outputLoc.y == pos.y) {
+			return element;
+		}
+	}
+}
+
+Wire* getWire(Point pos) {
+	for (int i = 0; i < wireLen; i++) {
+		Wire* wire = &Wires[i];
+		if (pointInList(wire->wireLocations, pos.x, pos.y)) {
+			return wire;
+		}
+	}
+	return NULL;
+}
+
+void resetCircuitNet() {
+	for (int i = 0; i < MAX_WIRES; i++) {
+		freeWire(&Wires[i]);
+	}
+	memset(Circuits, 0, sizeof(CircuitElement)*CIRCUIT_SIZE);
+	memset(Wires, 0, sizeof(Wire)*MAX_WIRES);
+	circuitLen = 0;
+	wireLen = 0;
+}
+
 char isWire(int type) {
 	return type == 0x11 || type == 0x46;
 }
@@ -122,63 +223,75 @@ char isElement(int type) {
 	return type >= 0x90 && type <= 0x9F;
 }
 
-void addInput(CircuitElement* self, int x, int y) {
+void setCircuitUnchecked() {
 	for (int i = 0; i < circuitLen; i++) {
-		CircuitElement* checking = &Circuits[i];
-		if (checking->outputLoc.x == x && checking->outputLoc.y == y) {
-			self->inputs[self->inputsNext] = checking;
-			self->inputsNext++;
-			break;
+		Circuits[i].checkedThisCycle = 0;
+	}
+	for (int i = 0; i < wireLen; i++) {
+		Wires[i].checkedThisCycle = 0; 
+	}
+}
+
+void resetPowerState() {
+	for (int i = 0; i < circuitLen; i++) {
+		Circuits[i].powered = 0;
+	}
+	for (int i = 0; i < wireLen; i++) {
+		Wires[i].powered = 0;
+	}
+}
+
+void addElementInput(CircuitElement* self, Point inputPoint) {
+	int px = inputPoint.x;
+	int py = inputPoint.y;
+	Point dir[4] = {
+			{ .x = px - 1, .y = py },
+			{ .x = px + 1, .y = py },
+			{ .x = px, .y = py - 1 },
+			{ .x = px, .y = py + 1 }
+	};
+
+	for (int i = 0; i < 4; i++) {
+		int type = getPxa(dir[i].x, dir[i].y);
+		if (isWire(type)) {
+			Wire* w = getWire(dir[i]);
+			if (w) {
+				for (int j = 0; j < 4; j++) {
+					if (!self->inputs[j]) {
+						self->inputs[j] = w;
+						break;
+					}
+				}
+			}
 		}
 	}
 }
 
 void connectInputs(CircuitElement* self) {
-	Point checked[100];
-	Point* next;
-	Point* checking;
-	checking = checked;
-	next = checked;
 	int tileType;
-	memset(checked, 0, sizeof(Point) * 100);
 	// add input sources to list
 	if (self->type == CIRCUIT_TYPE_SWITCH) {
-		*next = self->outputLoc;
-		next++;
+		addElementInput(self, self->outputLoc);
 	} else {
 		for (int dx = -1; dx < 2; dx++) {
 			for (int dy = -1; dy < 2; dy++) {
-				tileType = getPxa(self->outputLoc.x + dx, self->outputLoc.y + dy);
+				Point dp = { .x = self->outputLoc.x + dx, .y = self->outputLoc.y + dy };
+				tileType = getPxa(dp.x, dp.y);
 				if (tileType == 0x12 || tileType == 0x13) {
 					//its an input
-					next->x = self->outputLoc.x + dx;
-					next->y = self->outputLoc.y + dy;
-					next++;
+					addElementInput(self, dp);
 				}
 			}
 		}
 	}
+}
+
+void connectWireInputs(Wire* self) {
+	Point* checking = self->wireInputsPlaceholder;
 	while (checking->x | checking->y) {
-		int px = checking->x;
-		int py = checking->y; 
-		Point dir[4] = { 
-			{ .x = px - 1, .y = py },
-			{ .x = px + 1, .y = py },
-			{ .x = px, .y = py - 1 },
-			{ .x = px, .y = py + 1 }
-		};
-		for (int i = 0; i < 4; i++) {
-			Point* dp = &dir[i];
-			if (!pointInList(checked, dp->x, dp->y)) {
-				tileType = getPxa(dp->x, dp->y);
-				if (isWire(tileType)) {
-					*next = *dp;
-					next++;
-				} else if (isElement(tileType)) {
-					addInput(self, dp->x, dp->y);
-				}
-			}
-		}
+		CircuitElement* element = getElement(*checking);
+		self->inputs[self->inputsNext] = element;
+		self->inputsNext++;
 		checking++;
 	}
 }
@@ -187,6 +300,10 @@ void connectAllInputs() {
 	for (int i = 0; i < circuitLen; i++) {
 		CircuitElement* next = &Circuits[i];
 		connectInputs(next);
+	}
+	for (int i = 0; i < wireLen; i++) {
+		Wire* next = &Wires[i];
+		connectWireInputs(next);
 	}
 }
 
@@ -201,42 +318,35 @@ int powerWire(unsigned int x, unsigned int y, unsigned int layer) {
 	return 0;
 }
 
-int solvePowerNet(int checkPoint, int writingPoint, int gridLayer) {
-	POINT* checking = NULL;
-	POINT* writing = &PowerNet[writingPoint];
-	for (;;) {
-		checking = &PowerNet[checkPoint];
-		// quit looping if x and y are 0
-		if (!(checking->x | checking->y)) {
-			break;
+int connectWirePoints(Wire* self) {
+	Point* checking = self->wireLocations;
+	Point* writing = &self->wireLocations[self->wireLocNext];
+	int tileType;
+	while (checking->x | checking->y) {
+		int px = checking->x;
+		int py = checking->y;
+		Point dir[4] = {
+				{ .x = px - 1, .y = py },
+				{ .x = px + 1, .y = py },
+				{ .x = px, .y = py - 1 },
+				{ .x = px, .y = py + 1 }
+		};
+		for (int i = 0; i < 4; i++) {
+			Point* dp = &dir[i];
+			if (!pointInList(self->wireLocations, dp->x, dp->y)) {
+				tileType = getPxa(dp->x, dp->y);
+				if (isWire(tileType)) {
+					*writing = *dp;
+					writing++;
+					self->wireLocNext++;
+				} else if (isElement(tileType)) {
+					self->wireInputsPlaceholder[self->placeholderNext] = *dp;
+					self->placeholderNext++;
+				}
+			}
 		}
-		if (powerWire(checking->x - 1, checking->y, gridLayer)) {
-			writing->x = checking->x - 1;
-			writing->y = checking->y;
-			writing++;
-			writingPoint++;
-		}
-		if (powerWire(checking->x + 1, checking->y, gridLayer)) {
-			writing->x = checking->x + 1;
-			writing->y = checking->y;
-			writing++;
-			writingPoint++;
-		}
-		if (powerWire(checking->x, checking->y - 1, gridLayer)) {
-			writing->x = checking->x;
-			writing->y = checking->y - 1;
-			writing++;
-			writingPoint++;
-		}
-		if (powerWire(checking->x, checking->y + 1, gridLayer)) {
-			writing->x = checking->x;
-			writing->y = checking->y + 1;
-			writing++;
-			writingPoint++;
-		}
-		checkPoint++;
+		checking++;
 	}
-	return writingPoint;
 }
 
 
@@ -277,32 +387,31 @@ int checkGate(int gateX, int gateY, int gridLayer, int writePoint, char checkNor
 		}
 		break;
 	}
-	if (powered) {
-		PowerNet[writePoint].x = outX;
-		PowerNet[writePoint].y = outY;
-	}
-
 	return powered;
 }
 
 
 void checkGates() {
+	resetPowerState();
 	char changed;
 	int loops = 0;
 	do {
 		changed = 0;
 		for (int i = 0; i < circuitLen; i++) {
+			setCircuitUnchecked();
 			CircuitElement* c = &Circuits[i];
-			char powered = isPowered(c);
-			if (powered != c->powered) {
-				c->powered = powered;
-				changed = 1;
-			}
+			char wasPowered = c->powered;
+			isElementPowered(c);
+			changed |= wasPowered != c->powered;
 		}
 		if (++loops > 10) {
 			loops /= 0;
 		}
 	} while (changed);
+
+	for (int i = 0; i < wireLen; i++) {
+		setWireTiles(&Wires[i]);
+	}
 }
 
 void createCircuitElement(int xPos, int yPos, int tileId) {
@@ -328,13 +437,29 @@ void createCircuitElement(int xPos, int yPos, int tileId) {
 		break;
 	case 0x46:
 		elementType = CIRCUIT_TYPE_WIRE;
+		break;
+	case 0x15:
+		elementType = CIRCUIT_TYPE_SINK;
+		break;
 	default:
 		return;
 	}
 	if (elementType == CIRCUIT_TYPE_WIRE) {
-
+		initWire(&Wires[wireLen], p);
+		connectWirePoints(&Wires[wireLen]);
+		wireLen++;
 	} else {
 		initElement(&Circuits[circuitLen], elementType, p);
 		++circuitLen;
+	}
+}
+
+void toggleSwitch(int x, int y) {
+	Point p = { x, y };
+	CircuitElement* e = getElement(p);
+	if (e) {
+		e->isOpenSwitch = !e->isOpenSwitch;
+		checkGates();
+		setSwitchTiles(e);
 	}
 }

@@ -64,6 +64,7 @@ void NPC_circuit_solver(CS_ENTITY* self) {
 		connectAllInputs();
 	case 2: // run grid check
 		checkGates();
+		self->scriptState = 99;
 		break;
 	case 20: // free data
 		break;
@@ -77,15 +78,6 @@ void NPC_circuitSwitch(CS_ENTITY* self) {
 		self->scriptState = 0;
 		int xTile = self->xPos / CS_SUBPX / 16;
 		int yTile = self->yPos / CS_SUBPX / 16;
-		int layer = self->flagId;
-		int switchStatus = getPxaLayer(xTile, yTile, layer);
-		int tileId = getTile(xTile, yTile, layer);
-		switch (switchStatus) {
-		case 0x11: //lit closed circuit
-			setTile(xTile, yTile, layer, tileId + 0x2F);
-			break;
-		case 0x10:
-			setTile(xTile, yTile, layer, tileId - 0x2F);
-		}
+		toggleSwitch(xTile, yTile);
 	}
 }

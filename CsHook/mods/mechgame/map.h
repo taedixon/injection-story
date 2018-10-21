@@ -14,3 +14,4 @@ int hitTile_oneway(int x, int y);
 
 void setTile(unsigned int x, unsigned int y, unsigned int layer, unsigned int type);
 unsigned short getTile(unsigned int x, unsigned int y, unsigned int layer);
+int getPhysicalLayer();

@@ -109,6 +109,10 @@ int loadMap(char* mapName) {
 	return result;
 }
 
+int getPhysicalLayer() {
+	return physicalLayer;
+}
+
 char loadPxa(char* mapName) {
 	char nameBuf[0x100];
 	FILE* fileHandle;
