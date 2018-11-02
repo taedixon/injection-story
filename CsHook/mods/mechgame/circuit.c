@@ -37,11 +37,18 @@ char isSwitchPowered(CircuitElement* self, Wire* fromWire) {
 		for (int i = 0; i < 4; i++) {
 			Wire* input = self->inputs[i];
 			if (input && input != fromWire) {
-				self->powered |= isWirePowered(input);
+				isWirePowered(input);
 			}
 		}
-		if (self->isOpenSwitch) {
-			self->powered = 0;
+	}
+
+	self->powered = 0;
+	if (!self->isOpenSwitch) {
+		for (int i = 0; i < 4; i++) {
+			Wire* input = self->inputs[i];
+			if (input) {
+				self->powered |= input->powered;
+			}
 		}
 	}
 	return self->powered;
@@ -50,7 +57,9 @@ char isSwitchPowered(CircuitElement* self, Wire* fromWire) {
 char isPowered_and(CircuitElement* self) {
 	if (!self->checkedThisCycle) {
 		self->checkedThisCycle = 1;
-		self->powered = isWirePowered(self->inputs[0]) & isWirePowered(self->inputs[1]);
+		char lhs = isWirePowered(self->inputs[0]);
+		char rhs = isWirePowered(self->inputs[1]);
+		self->powered = lhs && rhs;
 	}
 	return self->powered;
 }
@@ -58,7 +67,9 @@ char isPowered_and(CircuitElement* self) {
 char isPowered_nand(CircuitElement* self) {
 	if (!self->checkedThisCycle) {
 		self->checkedThisCycle = 1;
-		self->powered = !(isWirePowered(self->inputs[0]) & isWirePowered(self->inputs[1]));
+		char lhs = isWirePowered(self->inputs[0]);
+		char rhs = isWirePowered(self->inputs[1]);
+		self->powered = !(lhs && rhs);
 	}
 	return self->powered;
 }
@@ -66,7 +77,9 @@ char isPowered_nand(CircuitElement* self) {
 char isPowered_xor(CircuitElement* self) {
 	if (!self->checkedThisCycle) {
 		self->checkedThisCycle = 1;
-		self->powered = isWirePowered(self->inputs[0]) ^ isWirePowered(self->inputs[1]);
+		char lhs = isWirePowered(self->inputs[0]);
+		char rhs = isWirePowered(self->inputs[1]);
+		self->powered = lhs ^ rhs;
 	}
 	return self->powered;
 }
@@ -75,6 +88,7 @@ char isPowered_xor(CircuitElement* self) {
 char isPowered_or(CircuitElement* self) {
 	if (!self->checkedThisCycle) {
 		self->checkedThisCycle = 1;
+		self->powered = 0;
 		for (int i = 0; i < 4; i++) {
 			if (self->inputs[i]) {
 				self->powered |= isWirePowered(self->inputs[i]);
@@ -86,7 +100,13 @@ char isPowered_or(CircuitElement* self) {
 char isPowered_nor(CircuitElement* self) {
 	if (!self->checkedThisCycle) {
 		self->checkedThisCycle = 1;
-		self->powered = !(isWirePowered(self->inputs[0]) | isWirePowered(self->inputs[1]));
+		self->powered = 0;
+		for (int i = 0; i < 4; i++) {
+			if (self->inputs[i]) {
+				self->powered |= isWirePowered(self->inputs[i]);
+			}
+		}
+		self->powered = !self->powered;
 	}
 	return self->powered;
 }
@@ -113,7 +133,7 @@ char isElementPowered(CircuitElement* self) {
 	}
 }
 
-setWireTiles(Wire* self) {
+void setWireTiles(Wire* self) {
 	int target = getPxa(self->wireLocations[0].x, self->wireLocations[0].y);
 	if (target == 0x46 && !self->powered || target == 0x11 && self->powered) {
 		//assume the wires already ok
@@ -156,10 +176,13 @@ void initWire(Wire* self, Point loc) {
 	self->inputsNext = 0;
 	self->wireLocations = malloc(sizeof(Point) * 100);
 	memset(self->wireLocations, 0, sizeof(Point) * 100);
+	self->wireLocNext = 0;
 	self->wireInputsPlaceholder = malloc(sizeof(Point) * 10);
 	memset(self->wireInputsPlaceholder, 0, sizeof(Point) * 10);
+	self->placeholderNext = 0;
 	self->wireLocations[0] = loc;
 	self->wireLocNext = 1;
+	self->powered = 0;
 }
 
 void freeWire(Wire* self) {
@@ -193,6 +216,7 @@ CircuitElement* getElement(Point pos) {
 			return element;
 		}
 	}
+	return 0;
 }
 
 Wire* getWire(Point pos) {
@@ -318,7 +342,7 @@ int powerWire(unsigned int x, unsigned int y, unsigned int layer) {
 	return 0;
 }
 
-int connectWirePoints(Wire* self) {
+void connectWirePoints(Wire* self) {
 	Point* checking = self->wireLocations;
 	Point* writing = &self->wireLocations[self->wireLocNext];
 	int tileType;
@@ -349,48 +373,6 @@ int connectWirePoints(Wire* self) {
 	}
 }
 
-
-int checkGate(int gateX, int gateY, int gridLayer, int writePoint, char checkNor) {
-	unsigned char gateType = getPxaLayer(gateX, gateY, gridLayer);
-	int powerCount = 0;
-	int outX = 0, outY = 0;
-	for (int dx = -1; dx < 2; dx++) {
-		for (int dy = -1; dy < 2; dy++) {
-			int tile = getPxaLayer(gateX + dx, gateY + dy, gridLayer);
-			if (tile == 0x12) {
-				powerCount++;
-			}
-			if (tile == 0x45) {
-				outX = gateX + dx;
-				outY = gateY + dy;
-			}
-		}
-	}
-	if (!(outX | outY)) {
-		return 0;
-	}
-	char powered = 0;
-	switch (gateType) {
-	case 0x91: //xor
-		if (powerCount == 1) {
-			powered = powerWire(outX, outY, gridLayer);
-		}
-		break;
-	case 0x90: //and
-		if (powerCount == 2) {
-			powered = powerWire(outX, outY, gridLayer);
-		}
-		break;
-	case 0x92: // NOR
-		if (powerCount == 0 && checkNor) {
-			powered = powerWire(outX, outY, gridLayer);
-		}
-		break;
-	}
-	return powered;
-}
-
-
 void checkGates() {
 	resetPowerState();
 	char changed;
@@ -398,11 +380,13 @@ void checkGates() {
 	do {
 		changed = 0;
 		for (int i = 0; i < circuitLen; i++) {
-			setCircuitUnchecked();
 			CircuitElement* c = &Circuits[i];
-			char wasPowered = c->powered;
-			isElementPowered(c);
-			changed |= wasPowered != c->powered;
+			if (c->type == CIRCUIT_TYPE_SINK) {
+				setCircuitUnchecked();
+				char wasPowered = c->powered;
+				isElementPowered(c);
+				changed |= wasPowered != c->powered;
+			}
 		}
 		if (++loops > 10) {
 			loops /= 0;
@@ -411,6 +395,12 @@ void checkGates() {
 
 	for (int i = 0; i < wireLen; i++) {
 		setWireTiles(&Wires[i]);
+	}
+	for (int i = 0; i < circuitLen; i++) {
+		CircuitElement* c = &Circuits[i];
+		if (c->type == CIRCUIT_TYPE_SWITCH) {
+			setSwitchTiles(c);
+		}
 	}
 }
 

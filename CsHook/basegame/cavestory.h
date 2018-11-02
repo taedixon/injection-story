@@ -263,4 +263,9 @@ extern void(*CS_killNpc)(CS_ENTITY* npc, int shouldVanish);
 
 #define CS_SUBPX 0x200
 
+#define CS_TILEFLAG_HITLEFT 1
+#define CS_TILEFLAG_HITROOF 2
+#define CS_TILEFLAG_HITRIGHT 4
+#define CS_TILEFLAG_HITFLOOR 8
+
 #endif

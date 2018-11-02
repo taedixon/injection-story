@@ -4,6 +4,7 @@
 #include "player.h"
 #include "weapon.h"
 #include "map.h"
+#include "mech.h"
 
 // custom player control vars
 int playerIdle = 0;
@@ -27,7 +28,6 @@ void setPlayerSpecialState(int newState) {
 	playerAnimTimer = 0;
 	playerIdle = 0;
 }
-
 
 void control_topdown(char canControl) {
 	int held = *CS_keyHeld;
@@ -368,7 +368,7 @@ void _playerCalcFrame_boat(int canControl) {
 void playerCalcFrame(char canControl) {
 	switch (*CS_controlMode) {
 	case 0:
-		_playerCalcFrame(canControl);
+		calcFrameMech(canControl);
 		break;
 	case 1:
 		_playerCalcFrame_boat(canControl);
@@ -542,9 +542,7 @@ void drawPlayerLife(char canControl) {
 }
 
 void drawPlayerArms(char canControl) {
-	//draw the treasure counter 
-	//write the player's treasure count to flagdata
-	
+	drawMechUI();
 }
 
 void drawMapName(int mode) {
@@ -587,13 +585,7 @@ void playerAct(int canControl) {
 		}
 		switch (*CS_controlMode) {
 		case 0:
-			if (playerSpecialState) {
-				_control_override();
-			} else {
-				//default, CS controls
-				CS_playerAgility(canControl);
-				_control_regular_postop(canControl);
-			}
+			controlMech(canControl);
 			break;
 		case 1:
 			control_topdown(canControl);

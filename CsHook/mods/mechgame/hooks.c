@@ -38,4 +38,5 @@ void hook_mechgame() {
 	// entities
 	CS_npcFuncTable[20] = &NPC_circuit_solver;
 	CS_npcFuncTable[78] = &NPC_circuitSwitch;
+	CS_npcFuncTable[8] = &NPC_crawler;
 }

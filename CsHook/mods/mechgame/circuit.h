@@ -46,6 +46,7 @@ void checkGates();
 void createCircuitElement(int xPos, int yPos, int tileId);
 void resetCircuitNet();
 void connectAllInputs();
+void toggleSwitch(int x, int y);
 
 
 #endif
